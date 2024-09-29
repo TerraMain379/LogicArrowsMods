@@ -3,9 +3,6 @@
     "description": "Dark theme from Logic-Arrows",
     "version": "1.0",
     "manifest_version": 3,
-    "icons": {
-        "256": "logo.png"
-    },
     "content_scripts": [
         {
             "matches": ["*://logic-arrows.io/*"],
