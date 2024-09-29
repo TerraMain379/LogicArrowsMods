@@ -1,0 +1,32 @@
+{
+    "name": "Open Logic-Arrows",
+    "description": "New setting for Logic-Arrows",
+    "version": "1.0.6",
+    "manifest_version": 3,
+    "icons": {
+        "256": "logo.png"
+    },
+
+    "permissions": [
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback"
+    ],
+    "host_permissions": [
+        "*://logic-arrows.io/*"
+    ],
+    "declarative_net_request" : {
+        "rule_resources" : [
+            {
+                "id": "ruleset_1",
+                "enabled": true,
+                "path": "rule.json"
+            }
+        ]
+    },
+    "web_accessible_resources": [
+        {
+            "resources": [ "scripts/mapCode.js" ],
+            "matches": [ "<all_urls>" ]
+        }
+    ]
+}
