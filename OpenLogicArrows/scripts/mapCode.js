@@ -1,58 +1,22 @@
-var cc = [];
-class GameManager{
-    static loadModule(index){
-        return s(index);
+(() => {
+    //region Array
+    //новые функции для упрощения работы с массивами
+    Array.prototype.insert = function (item, index) {
+        this.splice(index, 0, item);
     }
-    static codeManager = class {
-        static setLocationAction(location, action){
-            cc.push({
-                "location": location,
-                "action": action,
-                "type": "set"
-            });
-        }
-        static addLocationAction(location, action){
-            cc.push({
-                "location": location,
-                "action": action,
-                "type": "add"
-            })
-        }
-        static dd(location, context, ...args){
-            for (let c of cc){
-                if (c.location === location){
-                    //let ret = context !== null
-                    //    ? c.action.call(context, ...args)
-                    //    : c.action(...args);
-                    let ret = c.action.call(context, ...args);
-                    if (c.type==="set") {
-                        return [
-                            true,
-                            ret
-                        ]
-                    }
-                }
-            }
-            return [
-                false,
-                null
-            ]
-        }
+    Array.prototype.removeByIndex = function (index) {
+        this.splice(index, 1);
     }
-}
-const dd = GameManager.codeManager.dd;
+    Array.prototype.remove = function (item) {
+        this.removeByIndex(this.indexOf(item));
+    }
+    //endregion
+})();
 
-
-
-
-
-"use strict";
-var e = {
-    7403: (e, t) => {
-        let N = dd("7403", null, e, t); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.KeyboardHandler = void 0, t.KeyboardHandler = class {
+var moduleLoaders = {
+    7403: t => {
+        t.KeyboardHandler = class {
             constructor(e, t) {
-                let N = dd("KeyboardHandler.constructor", this, e, t); if (N[0]) return N[1];//:NDD
                 this.keyDown = e => {
                     "Tab" === e.code && e.preventDefault(), this.keys.has(e.code) || this.keyDownCallback(e.code, e.key), this.keys.add(e.code), this.chars.add(e.key)
                 }, this.keyUp = e => {
@@ -62,37 +26,31 @@ var e = {
             }
 
             dispose() {
-                let N = dd("KeyboardHandler.dispose", this); if (N[0]) return N[1];//:NDD
                 document.removeEventListener("keydown", this.keyDown), document.removeEventListener("keyup", this.keyUp)
             }
 
             getKeyPressed(e) {
-                let N = dd("KeyboardHandler.getKeyPressed", this, e); if (N[0]) return N[1];//:NDD
                 return this.keys.has(e)
             }
 
             getShiftPressed() {
-                let N = dd("KeyboardHandler.getShiftPressed", this); if (N[0]) return N[1];//:NDD
                 return this.getKeyPressed("ShiftLeft") || this.getKeyPressed("ShiftRight")
             }
 
             getCtrlPressed() {
-                let N = dd("KeyboardHandler.getCtrlPressed", this); if (N[0]) return N[1];//:NDD
                 const e = this.getKeyPressed("ControlLeft") || this.getKeyPressed("ControlRight"),
                     t = this.getKeyPressed("MetaLeft") || this.getKeyPressed("MetaRight");
                 return e || t
             }
 
             getCharPressed(e) {
-                let N = dd("KeyboardHandler.getCharPressed", this, e); if (N[0]) return N[1];//:NDD
                 return this.chars.has(e)
             }
         }
-    }, 8463: (e, t) => {
-        let N = dd("8463", null, e, t); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.MouseHandler = void 0, t.MouseHandler = class {
+    },//->KeyboardHandler
+    8463: t => {
+        t.MouseHandler = class {
             constructor(e, t, s, i) {
-                let N = dd("MouseHandler.constructor", this, e, t, s, i); if (N[0]) return N[1];//:NDD
                 this.mouseMove = e => {
                     this.mouseX = e.clientX - this.rect.x, this.mouseY = e.clientY - this.rect.y
                 }, this.mouseDown = e => {
@@ -119,99 +77,80 @@ var e = {
             }
 
             dispose() {
-                let N = dd("MouseHandler.dispose", this); if (N[0]) return N[1];//:NDD
                 document.removeEventListener("mousemove", this.mouseMove), document.removeEventListener("mousedown", this.mouseDown), document.removeEventListener("mouseup", this.mouseUp), document.removeEventListener("wheel", this.wheel), document.removeEventListener("touchmove", this.touchMove), document.removeEventListener("touchstart", this.touchStart), document.removeEventListener("touchend", this.touchEnd), document.removeEventListener("click", this.leftClick), document.removeEventListener("contextmenu", this.rightClick)
             }
 
             getMousePosition() {
-                let N = dd("MouseHandler.getMousePosition", this); if (N[0]) return N[1];//:NDD
                 return [this.mouseX, this.mouseY]
             }
 
             getMousePressed() {
-                let N = dd("MouseHandler.getMousePressed", this); if (N[0]) return N[1];//:NDD
                 return this.mousePressed
             }
 
             getWheelPressed() {
-                let N = dd("MouseHandler.getWheelPressed", this); if (N[0]) return N[1];//:NDD
                 return this.wheelPressed
             }
         }
-    }, 82: (e, t) => {
-        let N = dd("82", null, e, t); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ArrowData = void 0;
-
+    },//->MouseHandler
+    82: t => {
         class s {
             constructor() {
-                let N = dd("ArrowData.constructor", this); if (N[0]) return N[1];//:NDD
                 this.type = 0, this.rotation = 0, this.flipped = !1
             }
 
             static fromArrow(e) {
-                let N = dd("ArrowData.fromArrow", this, e); if (N[0]) return N[1];//:NDD
                 const t = new s;
-                return void 0 === e || (t.type = e.type, t.rotation = e.rotation, t.flipped = e.flipped), t
+                return undefined === e || (t.type = e.type, t.rotation = e.rotation, t.flipped = e.flipped), t
             }
 
             static fromState(e, t, i) {
-                let N = dd("ArrowData.fromState", this, e, t, i); if (N[0]) return N[1];//:NDD
                 const n = new s;
                 return n.type = e, n.rotation = t, n.flipped = i, n
             }
 
             static fromCopy(e) {
-                let N = dd("ArrowData.fromCopy", this, e); if (N[0]) return N[1];//:NDD
                 const t = new s;
                 return t.type = e.type, t.rotation = e.rotation, t.flipped = e.flipped, t
             }
 
             equals(e) {
-                let N = dd("ArrowData.equals", this, e); if (N[0]) return N[1];//:NDD
                 return this.type === e.type && this.rotation === e.rotation && this.flipped === e.flipped
             }
         }
 
         t.ArrowData = s
-    }, 370: (e, t) => {
-        let N = dd("7403", null, e, t); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Arrow = void 0, t.Arrow = class {
+    },//->ArrowData
+    370: t => {
+        t.Arrow = class {
             constructor() {
-                let N = dd("Arrow.constructor", this); if (N[0]) return N[1];//:NDD
                 this.type = 0, this.rotation = 0, this.flipped = !1, this.signal = 0, this.signalsCount = 0, this.lastType = 0, this.lastRotation = 0, this.lastFlipped = !1, this.lastSignal = 0, this.canBeEdited = !0
             }
         }
-    }, 691: (e, t, s) => {
-        let N = dd("691", null, e, t, s); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ChunkUpdates = void 0;
-        const i = s(3278);
+    },//->Arrow
+    691: t => {
+        const i = getModule(3278);
         var n;
         !function (e) {
-            let N = dd("691.f", null, e); if (N[0]) return N[1];//:NDD
             function t(e) {
-                let N = dd("691.f1", null, e); if (N[0]) return N[1];//:NDD
-                void 0 !== e && e.signalsCount++
+                undefined !== e && e.signalsCount++
             }
 
             function s(e) {
-                let N = dd("691.f2", null, e); if (N[0]) return N[1];//:NDD
-                void 0 !== e && (e.signal = 0)
+                undefined !== e && (e.signal = 0)
             }
 
             function n(e) {
-                let N = dd("691.f3", null, e); if (N[0]) return N[1];//:NDD
                 e.lastType = e.type, e.lastRotation = e.rotation, e.lastFlipped = e.flipped, e.lastSignal = e.signal
             }
 
             function o(e, t, s, n, o, a = -1, r = 0) {
-                let N = dd("691.f4", null, e, t, s, n, o, a, r); if (N[0]) return N[1];//:NDD
                 o && (r = -r), 0 === n ? (s += a, t += r) : 1 === n ? (t -= a, s += r) : 2 === n ? (s -= a, t -= r) : 3 === n && (t += a, s -= r);
                 let l = e;
-                if (t >= i.CHUNK_SIZE ? s >= i.CHUNK_SIZE ? (l = e.adjacentChunks[3], t -= i.CHUNK_SIZE, s -= i.CHUNK_SIZE) : s < 0 ? (l = e.adjacentChunks[1], t -= i.CHUNK_SIZE, s += i.CHUNK_SIZE) : (l = e.adjacentChunks[2], t -= i.CHUNK_SIZE) : t < 0 ? s < 0 ? (l = e.adjacentChunks[7], t += i.CHUNK_SIZE, s += i.CHUNK_SIZE) : s >= i.CHUNK_SIZE ? (l = e.adjacentChunks[5], t += i.CHUNK_SIZE, s -= i.CHUNK_SIZE) : (l = e.adjacentChunks[6], t += i.CHUNK_SIZE) : s < 0 ? (l = e.adjacentChunks[0], s += i.CHUNK_SIZE) : s >= i.CHUNK_SIZE && (l = e.adjacentChunks[4], s -= i.CHUNK_SIZE), void 0 !== l) return l.getArrow(t, s)
+                if (t >= i.CHUNK_SIZE ? s >= i.CHUNK_SIZE ? (l = e.adjacentChunks[3], t -= i.CHUNK_SIZE, s -= i.CHUNK_SIZE) : s < 0 ? (l = e.adjacentChunks[1], t -= i.CHUNK_SIZE, s += i.CHUNK_SIZE) : (l = e.adjacentChunks[2], t -= i.CHUNK_SIZE) : t < 0 ? s < 0 ? (l = e.adjacentChunks[7], t += i.CHUNK_SIZE, s += i.CHUNK_SIZE) : s >= i.CHUNK_SIZE ? (l = e.adjacentChunks[5], t += i.CHUNK_SIZE, s -= i.CHUNK_SIZE) : (l = e.adjacentChunks[6], t += i.CHUNK_SIZE) : s < 0 ? (l = e.adjacentChunks[0], s += i.CHUNK_SIZE) : s >= i.CHUNK_SIZE && (l = e.adjacentChunks[4], s -= i.CHUNK_SIZE), undefined !== l) return l.getArrow(t, s)
             }
 
             e.update = function (e) {
-                let N = dd("691.e.update", null, e); if (N[0]) return N[1];//:NDD
                 e.chunks.forEach((e => function (e) {
                     for (let s = 0; s < i.CHUNK_SIZE; s++) for (let a = 0; a < i.CHUNK_SIZE; a++) {
                         const i = e.getArrow(s, a);
@@ -222,7 +161,7 @@ var e = {
                         const i = e.getArrow(t, s);
                         if (1 === i.type) i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (2 === i.type) i.signal = 1; else if (3 === i.type) i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (4 === i.type) 2 === i.signal ? i.signal = 1 : 0 === i.signal && i.signalsCount > 0 ? i.signal = 2 : 1 === i.signal && i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (5 === i.type) {
                             const n = o(e, t, s, i.rotation, i.flipped, 1);
-                            void 0 !== n && 0 !== n.lastSignal ? i.signal = 1 : i.signal = 0
+                            undefined !== n && 0 !== n.lastSignal ? i.signal = 1 : i.signal = 0
                         } else if (6 === i.type) i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (7 === i.type) i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (8 === i.type) i.signalsCount > 0 ? i.signal = 1 : i.signal = 0; else if (9 === i.type) 0 === i.signal ? i.signal = 1 : 1 === i.signal && (i.signal = 2); else if (10 === i.type) i.signalsCount > 0 ? i.signal = 2 : i.signal = 0; else if (11 === i.type) i.signalsCount > 0 ? i.signal = 2 : i.signal = 0; else if (12 === i.type) i.signalsCount > 0 ? i.signal = 2 : i.signal = 0; else if (13 === i.type) i.signalsCount > 0 ? i.signal = 2 : i.signal = 0; else if (14 === i.type) i.signalsCount > 0 ? i.signal = 2 : i.signal = 0; else if (15 === i.type) i.signalsCount > 0 ? i.signal = 0 : i.signal = 3; else if (16 === i.type) i.signalsCount > 1 ? i.signal = 3 : i.signal = 0; else if (17 === i.type) i.signalsCount % 2 == 1 ? i.signal = 3 : i.signal = 0; else if (18 === i.type) i.signalsCount > 1 ? i.signal = 3 : 1 === i.signalsCount && (i.signal = 0); else if (19 === i.type) i.signalsCount > 0 && (0 === i.signal ? i.signal = 3 : i.signal = 0); else if (20 === i.type) i.signalsCount > 0 && Math.random() < .5 ? i.signal = 5 : i.signal = 0; else if (21 === i.type) i.signal = 0; else if (22 === i.type) {
                             i.signalsCount > 0 ? i.signal = 1 : i.signal = 0;
                             const n = e.getLevelArrow(t, s);
@@ -241,10 +180,8 @@ var e = {
                     }))
                 }(e)))
             }, e.wasArrowChanged = function (e) {
-                let N = dd("691.e.wasArrowChanged", null, e); if (N[0]) return N[1];//:NDD
                 return e.type !== e.lastType || e.rotation !== e.lastRotation || e.flipped !== e.lastFlipped || e.signal !== e.lastSignal
             }, e.clearSignals = function (e) {
-                let N = dd("691.e.clearSignals", null, e); if (N[0]) return N[1];//:NDD
                 e.chunks.forEach((e => {
                     for (let t = 0; t < i.CHUNK_SIZE; t++) for (let s = 0; s < i.CHUNK_SIZE; s++) {
                         const i = e.getArrow(t, s);
@@ -256,9 +193,9 @@ var e = {
                 }))
             }
         }(n || (t.ChunkUpdates = n = {}))
-    }, 8798: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Chunk = void 0;
-        const i = s(370), n = s(3278);
+    },//->ChunkUpdates
+    8798: t => {
+        const i = getModule(370), n = getModule(3278);
         t.Chunk = class {
             constructor(e, t) {
                 this.x = e, this.y = t, this.adjacentChunks = new Array(8), this.arrows = new Array(n.CHUNK_SIZE * n.CHUNK_SIZE);
@@ -297,11 +234,12 @@ var e = {
                 this.levelArrows.clear()
             }
         }
-    }, 3278: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.CHUNK_SIZE = t.CELL_SIZE = void 0, t.CELL_SIZE = 256, t.CHUNK_SIZE = 16
-    }, 4817: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.GameMap = void 0;
-        const i = s(258), n = s(8798), o = s(3278);
+    },//->Chunk
+    3278: t => {
+        t.CELL_SIZE = 256, t.CHUNK_SIZE = 16
+    },//->(CHUNK_SIZE,CELL_SIZE)
+    4817: t => {
+        const i = getModule(258), n = getModule(8798), o = getModule(3278);
         t.GameMap = class {
             constructor() {
                 this.chunks = new Map
@@ -315,12 +253,12 @@ var e = {
 
             setArrowSignal(e, t, s) {
                 const i = this.getArrowForEditing(e, t);
-                void 0 !== i && 0 !== i.type && (i.signal = s)
+                undefined !== i && 0 !== i.type && (i.signal = s)
             }
 
             setArrowRotation(e, t, s, n = !0) {
                 const o = this.getArrowForEditing(e, t);
-                if (void 0 !== o && 0 !== o.type) {
+                if (undefined !== o && 0 !== o.type) {
                     if (n && !o.canBeEdited) return;
                     if (n && i.PlayerSettings.levelArrows.includes(o.type)) return;
                     o.rotation = s
@@ -329,7 +267,7 @@ var e = {
 
             setArrowFlipped(e, t, s, n = !0) {
                 const o = this.getArrowForEditing(e, t);
-                if (void 0 !== o && 0 !== o.type) {
+                if (undefined !== o && 0 !== o.type) {
                     if (n && !o.canBeEdited) return;
                     if (n && i.PlayerSettings.levelArrows.includes(o.type)) return;
                     o.flipped = s
@@ -338,19 +276,19 @@ var e = {
 
             getArrowType(e, t) {
                 const s = this.getArrow(e, t);
-                return void 0 === s ? 0 : s.type
+                return undefined === s ? 0 : s.type
             }
 
             resetArrow(e, t, s = !0) {
                 const n = this.getArrowForEditing(e, t);
-                void 0 !== n && (s && !n.canBeEdited || s && i.PlayerSettings.levelArrows.includes(n.type) || (n.type = 0, n.signal = 0, n.signalsCount = 0, n.rotation = 0, n.flipped = !1))
+                undefined !== n && (s && !n.canBeEdited || s && i.PlayerSettings.levelArrows.includes(n.type) || (n.type = 0, n.signal = 0, n.signalsCount = 0, n.rotation = 0, n.flipped = !1))
             }
 
             removeArrow(e, t, s = !0) {
                 const n = this.getChunkByArrowCoordinates(e, t);
-                if (void 0 === n) return;
+                if (undefined === n) return;
                 const o = this.getArrowForEditing(e, t);
-                if (void 0 !== o) {
+                if (undefined !== o) {
                     if (s && !o.canBeEdited) return;
                     if (s && i.PlayerSettings.levelArrows.includes(o.type)) return;
                     o.type = 0, o.signal = 0, o.signalsCount = 0, o.rotation = 0, o.flipped = !1
@@ -360,7 +298,7 @@ var e = {
 
             getArrow(e, t) {
                 const s = this.getChunkByArrowCoordinates(e, t);
-                if (void 0 !== s) return s.getArrow(e - s.x * o.CHUNK_SIZE, t - s.y * o.CHUNK_SIZE)
+                if (undefined !== s) return s.getArrow(e - s.x * o.CHUNK_SIZE, t - s.y * o.CHUNK_SIZE)
             }
 
             getChunk(e, t) {
@@ -370,13 +308,13 @@ var e = {
 
             getOrCreateChunk(e, t) {
                 const s = `${e},${t}`, i = this.chunks.get(s);
-                if (void 0 !== i) return i;
+                if (undefined !== i) return i;
                 const o = new n.Chunk(e, t);
                 this.chunks.set(s, o);
                 const a = [this.getChunk(e, t - 1), this.getChunk(e + 1, t - 1), this.getChunk(e + 1, t), this.getChunk(e + 1, t + 1), this.getChunk(e, t + 1), this.getChunk(e - 1, t + 1), this.getChunk(e - 1, t), this.getChunk(e - 1, t - 1)];
                 for (let e = 0; e < 8; e++) {
                     const t = a[e];
-                    void 0 !== t && (o.adjacentChunks[e] = t, t.adjacentChunks[(e + 4) % 8] = o)
+                    undefined !== t && (o.adjacentChunks[e] = t, t.adjacentChunks[(e + 4) % 8] = o)
                 }
                 return o
             }
@@ -397,7 +335,7 @@ var e = {
                 if (e.isEmpty()) {
                     for (let t = 0; t < 8; t++) {
                         const s = e.adjacentChunks[t];
-                        void 0 !== s && (s.adjacentChunks[(t + 4) % 8] = void 0)
+                        undefined !== s && (s.adjacentChunks[(t + 4) % 8] = undefined)
                     }
                     this.chunks.delete(`${e.x},${e.y}`)
                 }
@@ -420,12 +358,12 @@ var e = {
 
             getArrowForEditing(e, t) {
                 const s = this.getChunkByArrowCoordinates(e, t);
-                if (void 0 !== s) return s.getArrow(e - s.x * o.CHUNK_SIZE, t - s.y * o.CHUNK_SIZE)
+                if (undefined !== s) return s.getArrow(e - s.x * o.CHUNK_SIZE, t - s.y * o.CHUNK_SIZE)
             }
         }
-    }, 7514: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelArrow = void 0;
-        const i = s(370);
+    },//->GameMap
+    7514: t => {
+        const i = getModule(370);
         t.LevelArrow = class {
             constructor(e, t, s, n) {
                 this.type = e, this.x = t, this.y = s, this.action = n, this.levelAction = () => {
@@ -452,12 +390,12 @@ var e = {
                 return this.isStateValid
             }
         }
-    }, 110: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.SelectedMap = void 0;
-        const i = s(2149), n = s(2714), o = s(974), a = s(370), r = s(3278), l = s(4817);
+    },//->LevelArrow
+    110: t => {
+        const i = getModule(2149), n = getModule(2714), o = getModule(974), a = getModule(370), r = getModule(3278), l = getModule(4817);
         t.SelectedMap = class {
             constructor() {
-                this.selectedArrows = new Set, this.arrowsToPutOriginal = new Map, this.arrowsToPut = new Map, this.currentSelectedArrows = new Set, this.currentSelectionFirstPoint = void 0, this.currentSelectionSecondPoint = void 0, this.rotationState = 0, this.flipState = !1, this.tempMap = new l.GameMap
+                this.selectedArrows = new Set, this.arrowsToPutOriginal = new Map, this.arrowsToPut = new Map, this.currentSelectedArrows = new Set, this.currentSelectionFirstPoint = undefined, this.currentSelectionSecondPoint = undefined, this.rotationState = 0, this.flipState = !1, this.tempMap = new l.GameMap
             }
 
             select(e, t) {
@@ -485,15 +423,15 @@ var e = {
             }
 
             updateSelectionFromCurrentSelection() {
-                this.selectedArrows = new Set([...this.selectedArrows, ...this.currentSelectedArrows]), this.currentSelectedArrows.clear(), this.currentSelectionFirstPoint = void 0, this.currentSelectionSecondPoint = void 0
+                this.selectedArrows = new Set([...this.selectedArrows, ...this.currentSelectedArrows]), this.currentSelectedArrows.clear(), this.currentSelectionFirstPoint = undefined, this.currentSelectionSecondPoint = undefined
             }
 
             updateCurrentSelectedArea(e, t) {
-                void 0 !== this.currentSelectionFirstPoint ? this.currentSelectionSecondPoint = [e, t] : this.currentSelectionFirstPoint = [e, t]
+                undefined !== this.currentSelectionFirstPoint ? this.currentSelectionSecondPoint = [e, t] : this.currentSelectionFirstPoint = [e, t]
             }
 
             updateMouseSelection(e, t, s, i) {
-                if (i || this.clear(), this.updateCurrentSelectedArea(t, s), void 0 === this.currentSelectionFirstPoint || void 0 === this.currentSelectionSecondPoint) return;
+                if (i || this.clear(), this.updateCurrentSelectedArea(t, s), undefined === this.currentSelectionFirstPoint || undefined === this.currentSelectionSecondPoint) return;
                 const n = this.currentSelectionFirstPoint[0] - (this.currentSelectionFirstPoint[0] < 0 ? 1 : 0),
                     o = this.currentSelectionFirstPoint[1] - (this.currentSelectionFirstPoint[1] < 0 ? 1 : 0),
                     a = this.currentSelectionSecondPoint[0] - (this.currentSelectionSecondPoint[0] < 0 ? 1 : 0),
@@ -506,7 +444,7 @@ var e = {
             }
 
             getCurrentSelectedArea() {
-                if (void 0 !== this.currentSelectionFirstPoint && void 0 !== this.currentSelectionSecondPoint) return [this.currentSelectionFirstPoint[0], this.currentSelectionFirstPoint[1], this.currentSelectionSecondPoint[0], this.currentSelectionSecondPoint[1]]
+                if (undefined !== this.currentSelectionFirstPoint && undefined !== this.currentSelectionSecondPoint) return [this.currentSelectionFirstPoint[0], this.currentSelectionFirstPoint[1], this.currentSelectionSecondPoint[0], this.currentSelectionSecondPoint[1]]
             }
 
             setArrow(e) {
@@ -519,11 +457,11 @@ var e = {
                 let t = Number.MAX_SAFE_INTEGER, s = Number.MAX_SAFE_INTEGER;
                 this.tempMap.clear(), this.selectedArrows.forEach((i => {
                     const [n, o] = i.split(",").map((e => parseInt(e, 10))), a = e.getArrow(n, o);
-                    void 0 !== a && a.canBeEdited && (t = Math.min(t, n), s = Math.min(s, o))
+                    undefined !== a && a.canBeEdited && (t = Math.min(t, n), s = Math.min(s, o))
                 })), this.selectedArrows.forEach((i => {
                     const [n, o] = i.split(",").map((e => parseInt(e, 10))), a = n - t, r = o - s,
                         l = e.getArrow(n, o);
-                    void 0 !== l && l.canBeEdited && (this.tempMap.setArrowType(a, r, l.type), this.tempMap.setArrowRotation(a, r, l.rotation), this.tempMap.setArrowFlipped(a, r, l.flipped))
+                    undefined !== l && l.canBeEdited && (this.tempMap.setArrowType(a, r, l.type), this.tempMap.setArrowRotation(a, r, l.rotation), this.tempMap.setArrowFlipped(a, r, l.flipped))
                 }));
                 const i = (0, n.save)(this.tempMap);
                 return o.Utils.arrayBufferToBase64(i)
@@ -569,9 +507,9 @@ var e = {
                 this.selectedArrows.clear(), this.arrowsToPutOriginal.clear(), this.arrowsToPut.clear(), this.currentSelectedArrows.clear()
             }
         }
-    }, 2413: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ArrowDescriptions = void 0;
-        const i = s(6161);
+    },//->SelectedMap
+    2413: t => {
+        const i = getModule(6161);
         var n;
         !function (e) {
             const t = new Map([[0, new i.I18nText("Empty cell", "Пустая клетка", "Порожня клітина", "Пустая клетка", "Case vide")], [1, new i.I18nText("Arrow", "Стрелка", "Стрілка", "Стрэлка", "Flèche")], [2, new i.I18nText("Source block", "Блок источника", "Блок джерела", "Блок крыніцы", "Bloc de source")], [3, new i.I18nText("Blocker", "Блокер", "Блокер", "Блокер", "Bloqueur")], [4, new i.I18nText("Delay arrow", "Стрелка задержки", "Стрілка затримки", "Стрэлка затрымкі", "Flèche de retard")], [5, new i.I18nText("Signal detector", "Детектор сигнала", "Детектор сигналу", "Дэтэктар сігналу", "Directuer du signal")], [6, new i.I18nText("Splitter", "Разветвитель", "Розгалужувач", "Разгалінавальнік", "Diviseur")], [7, new i.I18nText("Splitter", "Разветвитель", "Розгалужувач", "Разгалінавальнік", "Diviseur")], [8, new i.I18nText("Splitter", "Разветвитель", "Розгалужувач", "Разгалінавальнік", "Diviseur")], [9, new i.I18nText("Pulse generator", "Генератор импульса", "Генератор імпульсу", "Генератар імпульсу", "Générateur de pulsion")], [10, new i.I18nText("Blue arrow", "Синяя стрелка", "Синя стрілка", "Сіняя стрэлка", "Flèche bleue")], [11, new i.I18nText("Diagonal arrow", "Диагональная стрелка", "Діагональна стрілка", "Дыяганальная стрэлка", "Flèche diagonale")], [12, new i.I18nText("Blue splitter", "Синий разветвитель", "Синій розгалужувач", "Сіні разгалінавальнік", "Diviseur bleu")], [13, new i.I18nText("Blue splitter", "Синий разветвитель", "Синій розгалужувач", "Сіні разгалінавальнік", "Diviseur bleu")], [14, new i.I18nText("Blue splitter", "Синий разветвитель", "Синій розгалужувач", "Сіні разгалінавальнік", "Diviseur bleu")], [15, new i.I18nText("Not gate", "Отрицание", "Заперечення", "Адмоўнік", "Porte logique de négation")], [16, new i.I18nText("And gate", "И", "І", "І", 'Porte logique "et"')], [17, new i.I18nText("XOR gate", "Исключающее ИЛИ", "Виняткове АБО", "Выключнае АБО", 'Porte logique de négation "XOR"')], [18, new i.I18nText("Latch", "Триггер", "Тригер", "Трыгер", "Déclencheur")], [19, new i.I18nText("T flip-flop", "T-триггер", "T-тригер", "T-трыгер", "Déclencheur-T")], [20, new i.I18nText("Randomizer", "Рандомайзер", "Рандомайзер", "Рандамайзер", "Randomiseur")], [21, new i.I18nText("Button", "Кнопка", "Кнопка", "Кнопка", "Bouton")], [22, new i.I18nText("Source", "Источник", "Джерело", "Крыніца", "Source")], [23, new i.I18nText("Target", "Приемник", "Приймач", "Прыёмнік", "Cible")], [24, new i.I18nText("Directional button", "Направленная кнопка", "Направлена кнопка", "Накіраваная кнопка", "Bouton dirrectionel")]]),
@@ -581,69 +519,116 @@ var e = {
                 return t.size
             }, e.getArrowName = function (e) {
                 var s;
-                const i = null === (s = t.get(e)) || void 0 === s ? void 0 : s.get();
-                return void 0 !== i ? i : "Unknown"
+                const i = null === (s = t.get(e)) || undefined === s ? undefined : s.get();
+                return undefined !== i ? i : "Unknown"
             }, e.getArrowActivation = function (e) {
                 var t;
-                const i = null === (t = s.get(e)) || void 0 === t ? void 0 : t.get();
-                return void 0 !== i ? i : "Unknown"
+                const i = null === (t = s.get(e)) || undefined === t ? undefined : t.get();
+                return undefined !== i ? i : "Unknown"
             }, e.getArrowAction = function (e) {
                 var t;
-                const s = null === (t = n.get(e)) || void 0 === t ? void 0 : t.get();
-                return void 0 !== s ? s : "Unknown"
+                const s = null === (t = n.get(e)) || undefined === t ? undefined : t.get();
+                return undefined !== s ? s : "Unknown"
             }
         }(n || (t.ArrowDescriptions = n = {}))
-    }, 7906: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ControlsHintsText = void 0;
-        const i = s(6161);
+    },//->ArrowDescriptions
+    7906: t => {
+        const i = getModule(6161);
         var n;
         !function (e) {
             e.MOVE = new i.I18nText("move", "двигаться", "рухатися", "рухацца", "se déplacer"), e.ROTATE = new i.I18nText("rotate", "повернуть", "обернути", "абярыць", "tourner"), e.DELETE = new i.I18nText("delete", "удалить", "видалити", "выдаліць", "supprimer"), e.SELECT = new i.I18nText("select", "выделить", "виділіць", "вылучыць", "sélectionner"), e.UNDO = new i.I18nText("undo", "отмена", "відміна", "адмена", "annuler"), e.PAUSE = new i.I18nText("pause", "пауза", "пауза", "паўза", "pause"), e.MENU = new i.I18nText("menu", "меню", "меню", "меню", "menu"), e.SET_ARROW = new i.I18nText("set", "поставить", "поставити", "паставіць", "mettre"), e.FLIP = new i.I18nText("flip", "отразить", "відзеркаліць", "адлюстраваць", "refléter"), e.PICK = new i.I18nText("pick", "пипетка", "піпетка", "піпетка", "pipette"), e.INVENTORY = new i.I18nText("inventory", "инвентарь", "інвентар", "інвентар", "inventaire"), e.FREE_CURSOR = new i.I18nText("free cursor", "освободить курсор", "звільніць курсор", "зваліць курсор", "libérer le curseur"), e.COPY = new i.I18nText("copy", "скопировать", "скопіювати", "скапіяваць", "copier"), e.PASTE = new i.I18nText("paste", "вставить", "вставити", "ўставіць", "coller"), e.CUT = new i.I18nText("cut", "вырезать", "вирізати", "выразаць", "couper"), e.DELETE_SELECTION = new i.I18nText("delete selection", "удалить выделенное", "видалити виділене", "выдаліць вылучанае", "supprimer la sélection"), e.SELECT_OR_DESELECT = new i.I18nText("select / deselect", "выделить / сбросить", "виділіць / скинути", "вылучыць / скінуць", "sélectionner / désélectionner"), e.ADD_SELECTION = new i.I18nText("add selection", "добавить выделение", "додати виділення", "дадаць вылучэнне", "ajouter une sélection")
         }(n || (t.ControlsHintsText = n = {}))
-    }, 3446: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.GameText = void 0;
-        const i = s(6161);
+    },//->ControlsHintsText
+    3446: t => {
+        const I18nText = getModule(6161).I18nText;
         var n;
         !function (e) {
-            e.SIGN_IN_WITH_GOOGLE = new i.I18nText("Sign in with Google", "Войти через Google", "Увійти через Google", "Увайсці праз Google", "Se connecter via Google"), e.LOGIN_TEXT = new i.I18nText("Let’s play with simplicity to create complexity!", "Создайте сложные структуры из простых элементов!", "Створіть складні структури з простих елементів!", "Стварыце складаныя структуры з простых элементаў!", "Créez des structures compliquées avec des éléments simples !"), e.LOGOUT = new i.I18nText("Logout", "Выйти", "Вийти", "Выйсці", "Se connecter"), e.ARROWS_TITLE = new i.I18nText("Logic Arrows", "Стрелочки", "Стрілочки", "Стрэлачкі", "Fléchettes"), e.MAPS = new i.I18nText("Maps", "Карты", "Мапи", "Карты", "Cartes"), e.GUIDE = new i.I18nText("Guide", "Гайд", "Гайд", "Гайд", "Guide"), e.MENU_BACK = new i.I18nText("Back", "Назад", "Назад", "Назад", "Retour"), e.PERFOMANCE_TITLE = new i.I18nText("Perfomance", "Производительность", "Продуктивність", "Прадукцыйнасць", "Performance"), e.PER_SECOND = new i.I18nText("per second", "в секунду", "за секунду", "у секунду", "par seconde"), e.NEW_MAP = new i.I18nText("New map", "Новая карта", "Нова мапа", "Новая карта", "Nouvelle carte"), e.MAP_NAME = new i.I18nText("Map name", "Название карты", "Назва мапи", "Назва карты", "Nom de la carte"), e.MAP_DESCRIPTION = new i.I18nText("Map description", "Описание карты", "Опис мапи", "Апісанне карты", "Description de la carte"), e.SAVING = new i.I18nText("Saving...", "Сохранение...", "Збереження...", "Захаванне...", "Sauvegarde..."), e.SAVED = new i.I18nText("Saved", "Сохранено", "Збережено", "Захавана", "Sauvé"), e.CANCEL = new i.I18nText("Cancel", "Отмена", "Скасувати", "Адмяніць", "Annuler"), e.DELETE = new i.I18nText("Delete", "Удалить", "Видалити", "Выдаліць", "Supprimer"), e.START_GAME = new i.I18nText("Start game", "Начать игру", "Почати гру", "Пачаць гульню", "Commencer le jeu"), e.LEVELS = new i.I18nText("Levels", "Уровни", "Рівні", "Узроўні", "Niveaux"), e.LEVEL = new i.I18nText("Level", "Уровень", "Рівень", "Узровень", "Niveau"), e.ACCEPT = new i.I18nText("Accept", "Принять", "Прийняти", "Прыняць", "Accepter"), e.SET_NAME = new i.I18nText("Enter your game name", "Введите ваше имя в игре", "Введіть ваше ім'я у грі", "Увядзіце ваша імя ў гульні", "Entrer votre pseudo"), e.NAME = new i.I18nText("Name", "Имя", "Ім'я", "Імя", "Nom"), e.ACCOUNT = new i.I18nText("Account", "Аккаунт", "Акаунт", "Акаўнт", "Compte"), e.COMMUNITY_MAPS = new i.I18nText("Community maps", "Карты сообщества", "Мапи спільноти", "Карты суполкі", "Cartes de comminauté"), e.NEWS = new i.I18nText("News", "Новости", "Новини", "Навіны", "Nouvelles"), e.SETTINGS = new i.I18nText("Settings", "Настройки", "Налаштування", "Налады", "Paramètres"), e.NAME_ERROR_TOO_SHORT = new i.I18nText("Name must be longer than 3 characters", "Имя должно быть длиннее 3 символов", "Ім'я повинно бути довшим за 3 символи", "Імя павінна быць даўжэй чым за 3 сімвалы", "Le nom doit être plus long que 3 symboles"), e.NAME_ERROR_CHARS = new i.I18nText('Name can only contain English letters, numbers, spaces or "_" symbol', 'Имя может содержать только английские буквы, цифры, пробелы или символ "_"', 'Ім\'я може містити тільки англійські літери, цифри, пробіли або символ "_"', 'Імя можа ўтрымліваць толькі ангельскія літары, лічбы, прабелы або сімвал "_"', 'Le nom ne peut contenir que des lettres anglaises, espaces ou le symbole "_"'), e.NAME_ERROR_SPACE = new i.I18nText("Name cannot start or end with a space", "Имя не может начинаться или заканчиваться пробелом", "Ім'я не може починатися або закінчуватися пробілом", "Імя не можа пачынацца ці заканчвацца прабелам", "Le nom ne doit pas se terminer avec une espace"), e.NAME_ERROR_SPACES_COUNT = new i.I18nText("Name cannot contain more than one space in a row", "Имя не может содержать больше одного пробела подряд", "Ім'я не може містити більше одного пробілу поспіль", "Імя не можа ўтрымліваць больш за адзін прабел пад радок", "Le nom ne doit pas contenir plus qu'une espace de suite"), e.NAME_ERROR_UNDERSCORES_COUNT = new i.I18nText('Name cannot contain more than one "_" symbol in a row', 'Имя не может содержать больше одного символа "_" подряд', 'Ім\'я не може містити більше одного символу "_" поспіль', 'Імя не можа ўтрымліваць больш за адзін сімвал "_" пад радок', 'Le nom ne doit pas contenir plus q\'un symbole "_" de suite'), e.NAME_ERROR_CANNOT_START_WITH_DIGIT = new i.I18nText("Name cannot start with a digit", "Имя не может начинаться с цифры", "Ім'я не може починатися з цифри", "Імя не можа пачынацца з лічбы", "Le nom ne doit pas se commencer avec une chiffre"), e.NAME_ERROR_EXIST_OR_UNAVAILABLE = new i.I18nText("This name already exists or unavailable", "Это имя уже существует или недоступно", "Це ім'я вже існує або недоступне", "Гэта імя ўжо існуе або недаступна", "Ce nom-ci est déjà pris ou indisponible"), e.PRIVACY_POLICY = new i.I18nText("Privacy policy", "Политика конфиденциальности", "Політика конфіденційності", "Палітыка канфідэнцыяльнасці", "Politique de confidentialité"), e.TERMS_AND_CONDITIONS = new i.I18nText("Terms and conditions", "Условия использования", "Умови використання", "Умовы выкарыстання", "Conditions d'usage"), e.LEVEL_TESTING = new i.I18nText("Testing the level...", "Тестирование уровня...", "Тестування рівня...", "Тэставанне ўзроўня...", "Test du niveau..."), e.MAPS_10_LVL = new i.I18nText("Complete level 10 to unlock maps", "Пройдите уровень 10, чтобы разблокировать карты", "Пройдіть рівень 10, щоби розблокувати мапи", "Прайдзіце ўзровень 10, каб разблакаваць карты", "Complétez le niveau 10 pour débloquer les cartes"), e.UNABLE_TO_SAVE = new i.I18nText("Unable to save", "Не удалось сохранить", "Неможливо зберегти", "Не атрымалася захаваць", "Impossible de sauver"), e.MAP_TOO_LARGE = new i.I18nText("Map is too large", "Карта слишком большая", "Мапа занадта вялікая", "Карта занадта вялікая", "La carte est trop grande"), e.SHOW_SPOILER = new i.I18nText("Show spoiler", "Показать подсказку", "Показати підказку", "Паказаць падказку", "Montrer une astuce"), e.COOKIES_TITLE = new i.I18nText("Accept cookies to start the game", "Примите куки, чтобы начать игру", "Прийміть кукі, щоби почати гру", "Прымеце кукі, каб пачаць гульню", 'Accepter les "Cookies" pour commencer le jeu'), e.COOKIES_TEXT = new i.I18nText('Our website uses cookies for authentication and saving the game progress.\n     We do not collect any cookies unless you click the "Accept" button below.', 'Наш сайт использует куки для аутентификации и сохранения прогресса игры.\n      Мы не собираем никаких куки, пока вы не нажмете кнопку "Принять" ниже.', 'Наш сайт використовує кукі для аутентифікації та збереження прогресу гри.\n      Ми не збираємо жодних кукі, поки ви не натиснете кнопку "Прийняти" нижче.', 'Наш сайт выкарыстоўвае кукі для аўтэнтыфікацыі і захавання прагрэсу гульні.\n      Мы не збіраем ніякіх кукі, пакуль вы не націснеце кнопку "Прыняць" ніжэй.', 'Notre site web n\'utilise les "Cookies" que pour authentification et pour saver le progrès du jeu.\n      L\'on ne collecte pas de "Cookies" si vous n\'avez encore pas cliqué sur le bouton "Accepter" ci-dessous'), e.AUTOSAVING = new i.I18nText("Autosaving...", "Автосохранение...", "Автозбереження...", "Аўтазахаванне...", "Sauvegarde automatique"), e.ACTIVATES = new i.I18nText("Activates:", "Активируется:", "Активується:", "Актывуецца:", "S'active :"), e.ON_ACTIVATION = new i.I18nText("On activation:", "При активации:", "При активації:", "Пры актывацыі:", "Quand activé :"), e.LANGUAGE = new i.I18nText("Language", "Язык", "Мова", "Мова", "Langue"), e.SHOW_CONTROLS_HINTS = new i.I18nText("Show controls hints", "Показывать подсказки управления", "Показувати підказки управління", "Паказваць падказкі кіравання", "Afficher les conseils sur les contrôles"), e.MAX_ZOOM_OUT = new i.I18nText("Max zoom out", "Максимальное отдаление", "Максимальне віддалення", "Максімальнае аддаленне", "Zoom arrière maximum")
+            e.SIGN_IN_WITH_GOOGLE = new I18nText("Sign in with Google", "Войти через Google", "Увійти через Google", "Увайсці праз Google", "Se connecter via Google");
+            e.LOGIN_TEXT = new I18nText("Let’s play with simplicity to create complexity!", "Создайте сложные структуры из простых элементов!", "Створіть складні структури з простих елементів!", "Стварыце складаныя структуры з простых элементаў!", "Créez des structures compliquées avec des éléments simples !");
+            e.LOGOUT = new I18nText("Logout", "Выйти", "Вийти", "Выйсці", "Se connecter");
+            e.ARROWS_TITLE = new I18nText("Logic Arrows", "Стрелочки", "Стрілочки", "Стрэлачкі", "Fléchettes");
+            e.MAPS = new I18nText("Maps", "Карты", "Мапи", "Карты", "Cartes");
+            e.GUIDE = new I18nText("Guide", "Гайд", "Гайд", "Гайд", "Guide");
+            e.MENU_BACK = new I18nText("Back", "Назад", "Назад", "Назад", "Retour");
+            e.PERFOMANCE_TITLE = new I18nText("Perfomance", "Производительность", "Продуктивність", "Прадукцыйнасць", "Performance");
+            e.PER_SECOND = new I18nText("per second", "в секунду", "за секунду", "у секунду", "par seconde");
+            e.NEW_MAP = new I18nText("New map", "Новая карта", "Нова мапа", "Новая карта", "Nouvelle carte");
+            e.MAP_NAME = new I18nText("Map name", "Название карты", "Назва мапи", "Назва карты", "Nom de la carte");
+            e.MAP_DESCRIPTION = new I18nText("Map description", "Описание карты", "Опис мапи", "Апісанне карты", "Description de la carte");
+            e.SAVING = new I18nText("Saving...", "Сохранение...", "Збереження...", "Захаванне...", "Sauvegarde...");
+            e.SAVED = new I18nText("Saved", "Сохранено", "Збережено", "Захавана", "Sauvé");
+            e.CANCEL = new I18nText("Cancel", "Отмена", "Скасувати", "Адмяніць", "Annuler");
+            e.DELETE = new I18nText("Delete", "Удалить", "Видалити", "Выдаліць", "Supprimer");
+            e.START_GAME = new I18nText("Start game", "Начать игру", "Почати гру", "Пачаць гульню", "Commencer le jeu");
+            e.LEVELS = new I18nText("Levels", "Уровни", "Рівні", "Узроўні", "Niveaux");
+            e.LEVEL = new I18nText("Level", "Уровень", "Рівень", "Узровень", "Niveau");
+            e.ACCEPT = new I18nText("Accept", "Принять", "Прийняти", "Прыняць", "Accepter");
+            e.SET_NAME = new I18nText("Enter your game name", "Введите ваше имя в игре", "Введіть ваше ім'я у грі", "Увядзіце ваша імя ў гульні", "Entrer votre pseudo");
+            e.NAME = new I18nText("Name", "Имя", "Ім'я", "Імя", "Nom");
+            e.ACCOUNT = new I18nText("Account", "Аккаунт", "Акаунт", "Акаўнт", "Compte");
+            e.COMMUNITY_MAPS = new I18nText("Community maps", "Карты сообщества", "Мапи спільноти", "Карты суполкі", "Cartes de comminauté");
+            e.NEWS = new I18nText("News", "Новости", "Новини", "Навіны", "Nouvelles");
+            e.SETTINGS = new I18nText("Settings", "Настройки", "Налаштування", "Налады", "Paramètres");
+            e.NAME_ERROR_TOO_SHORT = new I18nText("Name must be longer than 3 characters", "Имя должно быть длиннее 3 символов", "Ім'я повинно бути довшим за 3 символи", "Імя павінна быць даўжэй чым за 3 сімвалы", "Le nom doit être plus long que 3 symboles");
+            e.NAME_ERROR_CHARS = new I18nText('Name can only contain English letters, numbers, spaces or "_" symbol', 'Имя может содержать только английские буквы, цифры, пробелы или символ "_"', 'Ім\'я може містити тільки англійські літери, цифри, пробіли або символ "_"', 'Імя можа ўтрымліваць толькі ангельскія літары, лічбы, прабелы або сімвал "_"', 'Le nom ne peut contenir que des lettres anglaises, espaces ou le symbole "_"');
+            e.NAME_ERROR_SPACE = new I18nText("Name cannot start or end with a space", "Имя не может начинаться или заканчиваться пробелом", "Ім'я не може починатися або закінчуватися пробілом", "Імя не можа пачынацца ці заканчвацца прабелам", "Le nom ne doit pas se terminer avec une espace");
+            e.NAME_ERROR_SPACES_COUNT = new I18nText("Name cannot contain more than one space in a row", "Имя не может содержать больше одного пробела подряд", "Ім'я не може містити більше одного пробілу поспіль", "Імя не можа ўтрымліваць больш за адзін прабел пад радок", "Le nom ne doit pas contenir plus qu'une espace de suite");
+            e.NAME_ERROR_UNDERSCORES_COUNT = new I18nText('Name cannot contain more than one "_" symbol in a row', 'Имя не может содержать больше одного символа "_" подряд', 'Ім\'я не може містити більше одного символу "_" поспіль', 'Імя не можа ўтрымліваць больш за адзін сімвал "_" пад радок', 'Le nom ne doit pas contenir plus q\'un symbole "_" de suite');
+            e.NAME_ERROR_CANNOT_START_WITH_DIGIT = new I18nText("Name cannot start with a digit", "Имя не может начинаться с цифры", "Ім'я не може починатися з цифри", "Імя не можа пачынацца з лічбы", "Le nom ne doit pas se commencer avec une chiffre");
+            e.NAME_ERROR_EXIST_OR_UNAVAILABLE = new I18nText("This name already exists or unavailable", "Это имя уже существует или недоступно", "Це ім'я вже існує або недоступне", "Гэта імя ўжо існуе або недаступна", "Ce nom-ci est déjà pris ou indisponible");
+            e.PRIVACY_POLICY = new I18nText("Privacy policy", "Политика конфиденциальности", "Політика конфіденційності", "Палітыка канфідэнцыяльнасці", "Politique de confidentialité");
+            e.TERMS_AND_CONDITIONS = new I18nText("Terms and conditions", "Условия использования", "Умови використання", "Умовы выкарыстання", "Conditions d'usage");
+            e.LEVEL_TESTING = new I18nText("Testing the level...", "Тестирование уровня...", "Тестування рівня...", "Тэставанне ўзроўня...", "Test du niveau...");
+            e.MAPS_10_LVL = new I18nText("Complete level 10 to unlock maps", "Пройдите уровень 10, чтобы разблокировать карты", "Пройдіть рівень 10, щоби розблокувати мапи", "Прайдзіце ўзровень 10, каб разблакаваць карты", "Complétez le niveau 10 pour débloquer les cartes");
+            e.UNABLE_TO_SAVE = new I18nText("Unable to save", "Не удалось сохранить", "Неможливо зберегти", "Не атрымалася захаваць", "Impossible de sauver");
+            e.MAP_TOO_LARGE = new I18nText("Map is too large", "Карта слишком большая", "Мапа занадта вялікая", "Карта занадта вялікая", "La carte est trop grande");
+            e.SHOW_SPOILER = new I18nText("Show spoiler", "Показать подсказку", "Показати підказку", "Паказаць падказку", "Montrer une astuce");
+            e.COOKIES_TITLE = new I18nText("Accept cookies to start the game", "Примите куки, чтобы начать игру", "Прийміть кукі, щоби почати гру", "Прымеце кукі, каб пачаць гульню", 'Accepter les "Cookies" pour commencer le jeu');
+            e.COOKIES_TEXT = new I18nText('Our website uses cookies for authentication and saving the game progress.\n     We do not collect any cookies unless you click the "Accept" button below.', 'Наш сайт использует куки для аутентификации и сохранения прогресса игры.\n      Мы не собираем никаких куки, пока вы не нажмете кнопку "Принять" ниже.', 'Наш сайт використовує кукі для аутентифікації та збереження прогресу гри.\n      Ми не збираємо жодних кукі, поки ви не натиснете кнопку "Прийняти" нижче.', 'Наш сайт выкарыстоўвае кукі для аўтэнтыфікацыі і захавання прагрэсу гульні.\n      Мы не збіраем ніякіх кукі, пакуль вы не націснеце кнопку "Прыняць" ніжэй.', 'Notre site web n\'utilise les "Cookies" que pour authentification et pour saver le progrès du jeu.\n      L\'on ne collecte pas de "Cookies" si vous n\'avez encore pas cliqué sur le bouton "Accepter" ci-dessous');
+            e.AUTOSAVING = new I18nText("Autosaving...", "Автосохранение...", "Автозбереження...", "Аўтазахаванне...", "Sauvegarde automatique");
+            e.ACTIVATES = new I18nText("Activates:", "Активируется:", "Активується:", "Актывуецца:", "S'active :");
+            e.ON_ACTIVATION = new I18nText("On activation:", "При активации:", "При активації:", "Пры актывацыі:", "Quand activé :");
+            e.LANGUAGE = new I18nText("Language", "Язык", "Мова", "Мова", "Langue");
+            e.SHOW_CONTROLS_HINTS = new I18nText("Show controls hints", "Показывать подсказки управления", "Показувати підказки управління", "Паказваць падказкі кіравання", "Afficher les conseils sur les contrôles");
+            e.MAX_ZOOM_OUT = new I18nText("Max zoom out", "Максимальное отдаление", "Максимальне віддалення", "Максімальнае аддаленне", "Zoom arrière maximum")
         }(n || (t.GameText = n = {}))
-    }, 6161: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.I18nText = void 0;
-        const i = s(3295);
+    },//->GameText
+    6161: t => {
+        const i = getModule(3295);
         t.I18nText = class {
-            constructor(e, t, s, i, n) {
-                this.en = e, this.ru = t, this.ua = s, this.by = i, this.fr = n
+            constructor(en, ru, ua, by, fr) {
+                this.en = en, this.ru = ru, this.ua = ua, this.by = by, this.fr = fr
             }
 
             get(...e) {
                 switch (i.LangSettings.getLanguage()) {
-                    case"en":
+                    case "en":
                     default:
                         return "string" == typeof this.en ? this.en : this.en(e);
-                    case"ru":
+                    case "ru":
                         return "string" == typeof this.ru ? this.ru : this.ru(e);
-                    case"ua":
+                    case "ua":
                         return "string" == typeof this.ua ? this.ua : this.ua(e);
-                    case"by":
+                    case "by":
                         return "string" == typeof this.by ? this.by : this.by(e);
-                    case"fr":
+                    case "fr":
                         return "string" == typeof this.fr ? this.fr : this.fr(e)
                 }
             }
         }
-    }, 3295: (e, t) => {
-        var s;
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LangSettings = void 0, function (e) {
+    },//->I18nText
+    3295: t => {
+        ((e) => {
             let t = "en";
             e.languages = ["en", "ru", "ua", "by", "fr"], e.languageNames = ["English", "Русский", "Українська", "Беларуская", "Français"], e.htmlCodes = ["en", "ru", "uk", "be", "fr"], e.getLanguage = function () {
                 return t
             }, e.setLanguage = function (s) {
                 e.languages.includes(s) && (t = s, document.documentElement.lang = e.htmlCodes[e.languages.indexOf(s)])
             }
-        }(s || (t.LangSettings = s = {}))
-    }, 3737: (e, t) => {
-        var s;
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LangUtils = void 0, function (e) {
+        })(t.LangSettings = {});
+    },//->LangSettings
+    3737: t => {
+        ((e) => {
             e.getLanguageFromString = function (e) {
                 switch (e) {
                     case"en":
@@ -673,30 +658,32 @@ var e = {
                         return "fr"
                 }
             }
-        }(s || (t.LangUtils = s = {}))
-    }, 8448: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelInfo = void 0, t.LevelInfo = class {
+        })(t.LangUtils = {});
+    },//->LangUtils
+    8448: t => {
+        t.LevelInfo = class {
             constructor(e, t) {
-                this.id = e, this.state = "locked", this.nextLevels = t, this.previousLevels = [], this.stateCallback = void 0
+                this.id = e, this.state = "locked", this.nextLevels = t, this.previousLevels = [], this.stateCallback = undefined
             }
 
             setState(e) {
-                return this.state = e, void 0 !== this.stateCallback && this.stateCallback(e), this
+                return this.state = e, undefined !== this.stateCallback && this.stateCallback(e), this
             }
 
             setCallback(e) {
                 this.stateCallback = e
             }
         }
-    }, 4909: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelOverlayInfo = void 0, t.LevelOverlayInfo = class {
+    },//->LevelInfo
+    4909: t => {
+        t.LevelOverlayInfo = class {
             constructor(e, t, s, i, n) {
                 this.x = e, this.y = t, this.width = s, this.height = i, this.outputs = n
             }
         }
-    }, 304: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelsControls = void 0;
-        const i = s(8463), n = s(3278);
+    },//->LevelOverlayInfo
+    304: t => {
+        const i = getModule(8463), n = getModule(3278);
         t.LevelsControls = class {
             constructor(e, t) {
                 this.wheelCallback = e => {
@@ -726,33 +713,34 @@ var e = {
                 this.game.offset[0] += (e - this.mousePosPrev[0]) * n.CELL_SIZE / this.game.scale * window.devicePixelRatio, this.game.offset[1] += (t - this.mousePosPrev[1]) * n.CELL_SIZE / this.game.scale * window.devicePixelRatio
             }
         }
-    }, 5164: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelsUI = void 0, t.LevelsUI = class {
+    },//->LevelsControls
+    5164: t => {
+        t.LevelsUI = class {
             dispose() {
             }
         }
-    }, 9010: (e, t, s) => {
+    },//->LevelsUI
+    9010: t => {
         var i;
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Levels = void 0;
-        const n = s(7514), o = s(8246), a = s(1521), r = s(8448), l = s(4909);
+        const n = getModule(7514), o = getModule(8246), a = getModule(1521), r = getModule(8448), l = getModule(4909);
 
         class h {
             static completeLevel(e) {
                 const t = this.levels.get(e);
-                void 0 !== t && (t.setState("completed"), t.nextLevels.forEach((e => {
+                undefined !== t && (t.setState("completed"), t.nextLevels.forEach((e => {
                     const t = this.levels.get(e);
-                    void 0 !== t && "completed" !== t.state && this.allPreviousLevelsCompleted(t) && t.setState("unlocked")
+                    undefined !== t && "completed" !== t.state && this.allPreviousLevelsCompleted(t) && t.setState("unlocked")
                 })))
             }
 
             static unlockLevel(e) {
                 const t = this.levels.get(e);
-                void 0 !== t && t.setState("unlocked")
+                undefined !== t && t.setState("unlocked")
             }
 
             static startLevel(e) {
                 var t;
-                null === (t = this.levelInitActions.get(e.info.id)) || void 0 === t || t(e)
+                null === (t = this.levelInitActions.get(e.info.id)) || undefined === t || t(e)
             }
 
             static addLevel(e, t, s, i, n, o) {
@@ -764,7 +752,7 @@ var e = {
                 this.levels.forEach((e => {
                     e.nextLevels.forEach((t => {
                         const s = this.levels.get(t);
-                        void 0 !== s && s.previousLevels.push(e.id)
+                        undefined !== s && s.previousLevels.push(e.id)
                     }))
                 }))
             }
@@ -772,7 +760,7 @@ var e = {
             static allPreviousLevelsCompleted(e) {
                 for (let t = 0; t < e.previousLevels.length; t++) {
                     const s = i.levels.get(e.previousLevels[t]);
-                    if (void 0 === s || "completed" !== s.state) return !1
+                    if (undefined === s || "completed" !== s.state) return !1
                 }
                 return !0
             }
@@ -781,7 +769,7 @@ var e = {
         t.Levels = h, i = h, h.levels = new Map, h.levelOverlayInfos = new Map, h.levelInitActions = new Map([[0, e => {
             e.levelArrows.push(new n.LevelArrow(23, 0, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(22, 0, 10, (e => (e.arrow.signal = 1, !0))));
             const t = i.levelRights.get(e.info.id);
-            void 0 !== t && e.playerControls.updatePlayerAccess(t), e.initLevel(), e.showTutorial((e => {
+            undefined !== t && e.playerControls.updatePlayerAccess(t), e.initLevel(), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAACFwAAAAEDEAAgADAAQAAWAFAA");
                 t.setResizeAction((() => t.game.focusOnBox(1, 0, 0, 6, .5, 1)))
             }))
@@ -814,7 +802,7 @@ var e = {
             const r = s[0][1];
             e.levelArrows.push(r), e.game.gameMap.setLevelArrow(r), e.levelArrows.push(new n.LevelArrow(22, 0, 5, (e => (e.arrow.signal = 1, !0))));
             const l = i.levelRights.get(e.info.id);
-            void 0 !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(), e.showTutorial()
+            undefined !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(), e.showTutorial()
         }], [2, e => {
             const t = [0];
             let s = 0, o = 0;
@@ -833,20 +821,20 @@ var e = {
                 return i.arrow.signal === (n | a) ? s++ : (i.state = null, r()), e.setProgress(s / 50), s >= 50
             })));
             const l = i.levelRights.get(e.info.id);
-            void 0 !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAACCQGwALQAARZhAXEAgQCRALEAAgASACIAMgBCAFIAYgCiArIDYwNzAIMAkwCUA5UDtQCmArYDBwGhAKUA");
                 t.setResizeAction((() => t.game.focusOnBox(2, 4, 3, 8, .5, 1)))
             }))
         }], [3, e => {
             e.levelArrows.push(new n.LevelArrow(23, 0, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(23, 2, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(23, 4, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(23, 6, 0, (e => 1 === e.arrow.signal))), e.game.gameMap.setArrowType(3, 5, 2);
             const t = e.game.gameMap.getArrow(3, 5);
-            void 0 !== t && (t.canBeEdited = !1);
+            undefined !== t && (t.canBeEdited = !1);
             const s = i.levelRights.get(e.info.id);
-            void 0 !== s && e.playerControls.updatePlayerAccess(s), e.initLevel(), e.showTutorial()
+            undefined !== s && e.playerControls.updatePlayerAccess(s), e.initLevel(), e.showTutorial()
         }], [4, e => {
             e.levelArrows.push(new n.LevelArrow(23, 0, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(23, -2, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(23, 2, 0, (e => 1 === e.arrow.signal))), e.levelArrows.push(new n.LevelArrow(22, 0, 5, (e => (e.arrow.signal = 1, !0))));
             const t = i.levelRights.get(e.info.id);
-            void 0 !== t && e.playerControls.updatePlayerAccess(t), e.initLevel(), e.showTutorial((e => {
+            undefined !== t && e.playerControls.updatePlayerAccess(t), e.initLevel(), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAAFCQCwAAwAsQEBEgIAEgAiADIAQgBSAGIAcgCCAJIAsgCjAbMDVAG0A1UBtQNWAVcBBwCiAAUAUwELAKQB");
                 t.setResizeAction((() => t.game.focusOnBox(2, 4, 4, 8, .5, 1)))
             }))
@@ -868,7 +856,7 @@ var e = {
                 return i.arrow.signal === n ? s++ : (i.state = null, r()), e.setProgress(s / 50), s >= 50
             })));
             const l = i.levelRights.get(e.info.id);
-            void 0 !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAAGAQ8AABAAIAAwAEAAUABgAHAAQgNDA0QDNQAWAiYCNgJGAwIAgAADAEEDCwAlAAcARQMMAFYACQBmAw==");
                 t.setResizeAction((() => t.game.focusOnBox(-2, 3, 4, 6, .5, 1)))
             }))
@@ -886,7 +874,7 @@ var e = {
                 return t++, e.setProgress(t / 50), t >= 50
             })));
             const o = i.levelRights.get(e.info.id);
-            void 0 !== o && e.playerControls.updatePlayerAccess(o), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== o && e.playerControls.updatePlayerAccess(o), e.initLevel(!0), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAAFARsAABAAIAAwAEAAUABgAHAAgACQAJEDsgCTAaMBswMEABQAJAA0AEQAVABkAHQAhACUALQDdQO1AwkAsQAGAJIBBwCiAAsApAEFAYUAlQE=");
                 t.setResizeAction((() => t.game.focusOnBox(-1, 2, 6, 5, .5, 1)))
             }))
@@ -909,7 +897,7 @@ var e = {
                 return i || (i = 1 === s.arrow.signal && !o.includes((e.game.tick - l) % 12)), i ? t++ : (s.state = null, h()), e.setProgress(t / 50), t >= 50
             })));
             const c = i.levelRights.get(e.info.id);
-            void 0 !== c && e.playerControls.updatePlayerAccess(c), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== c && e.playerControls.updatePlayerAccess(c), e.initLevel(!0), e.showTutorial((e => {
                 let t = "AAACAAAAAAAHARgAABAAIAAwAEAAUABgAHAAgACQAJEDogCTAcMA0wDzAQQAFAAkADQARABUAGQ";
                 t += "AdACEAAYAkgEQALIAEwDCAAwA0gAOAOIABwHyAJQACwKzA/QBlQMAAAEAAQkAAQABAwIAAwMEAwUD";
                 const s = new a.UIGameView(e, "AAACAAAAAAAHARgAABAAIAAwAEAAUABgAHAAgACQAJEDogCTAcMA0wDzAQQAFAAkADQARABUAGQAdACEAAYAkgEQALIAEwDCAAwA0gAOAOIABwHyAJQACwKzA/QBlQMAAAEAAQkAAQABAwIAAwMEAwUD");
@@ -933,7 +921,7 @@ var e = {
                 return i.arrow.signal === 1 - s[(e.game.tick - a) % s.length] ? t++ : (i.state = null, r()), e.setProgress(t / 50), t >= 50
             })));
             const l = i.levelRights.get(e.info.id);
-            void 0 !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial()
+            undefined !== l && e.playerControls.updatePlayerAccess(l), e.initLevel(!0), e.showTutorial()
         }], [9, e => {
             let t = 0;
             const s = [0, 1, 1, 0], o = [0];
@@ -952,7 +940,7 @@ var e = {
                 return i.arrow.signal === s[(e.game.tick - r) % s.length] ? t++ : (i.state = null, l()), e.setProgress(t / 50), t >= 50
             })));
             const h = i.levelRights.get(e.info.id);
-            void 0 !== h && e.playerControls.updatePlayerAccess(h), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== h && e.playerControls.updatePlayerAccess(h), e.initLevel(!0), e.showTutorial((e => {
                 const t = new a.UIGameView(e, "AAABAAAAAAADFwAAAAEDEAAgADAAQAACAFAAAwBRAw==");
                 t.setResizeAction((() => t.game.focusOnBox(-2, 0, 3, 4, .5, 1)))
             }))
@@ -966,7 +954,7 @@ var e = {
             };
             e.levelArrows.push(new n.LevelArrow(22, 0, 10, (t => (t.arrow.signal = s[e.game.tick % s.length], !0)))), e.game.gameMap.setArrowType(0, 5, 4);
             const c = e.game.gameMap.getArrow(0, 5);
-            void 0 !== c && (c.canBeEdited = !1), e.levelArrows.push(new n.LevelArrow(23, 0, 0, (s => {
+            undefined !== c && (c.canBeEdited = !1), e.levelArrows.push(new n.LevelArrow(23, 0, 0, (s => {
                 if (e.game.tick > 200 ? h() : e.game.tick > 50 ? e.game.updateSpeedLevel = 2 : e.game.tick > 10 && (e.game.updateSpeedLevel = 1), null === s.state) {
                     if (r.push(s.arrow.signal), r.length > 4) {
                         let t = 1 === r.at(-1);
@@ -978,7 +966,7 @@ var e = {
                 return s.arrow.signal === i ? t++ : (s.state = null, h()), e.setProgress(t / 50), t >= 50
             })));
             const d = i.levelRights.get(e.info.id);
-            void 0 !== d && e.playerControls.updatePlayerAccess(d), e.initLevel(!0), e.showTutorial((e => {
+            undefined !== d && e.playerControls.updatePlayerAccess(d), e.initLevel(!0), e.showTutorial((e => {
                 let t = "AAACAAAAAAAHARcAABAAIAAwAEAAUABgAHAAgACQAJEDogCTAdMA4wAEABQAJAA0AEQAV";
                 t += "ABkAHQAhAAGAJIBDAGyAOIAEADCABMA0gAOAfIAlAALAMMDAwCFAwAAAQADCQARAAcAAgABBBIAAwETAxQDFQMLAAQB";
                 const s = new a.UIGameView(e, "AAACAAAAAAAHARcAABAAIAAwAEAAUABgAHAAgACQAJEDogCTAdMA4wAEABQAJAA0AEQAVABkAHQAhAAGAJIBDAGyAOIAEADCABMA0gAOAfIAlAALAMMDAwCFAwAAAQADCQARAAcAAgABBBIAAwETAxQDFQMLAAQB");
@@ -1054,9 +1042,9 @@ var e = {
             canDelete: !0,
             arrowGroups: [[1, 2, 3, 5]]
         })]]), i.addLevel(0, [1], 15, 7, 5, [[2, -1, 1]]), i.addLevel(1, [2], 15, -1, 5, [[2, -1, 1]]), i.addLevel(2, [3], 15, -9, 5, [[2, -1, 1]]), i.addLevel(3, [4, 5], 15, -17, 5, [[-1, 2, 1], [5, 2, 1]]), i.addLevel(4, [6], 0, -17, 5, [[2, -1, 1]]), i.addLevel(5, [8], 30, -17, 5, [[2, -1, 1]]), i.addLevel(6, [7], 2, -27, 5, [[3, -1, 2]]), i.addLevel(7, [10], 8, -36, 5, [[4, -1, 2]]), i.addLevel(8, [9], 28, -27, 5, [[1, -1, 2]]), i.addLevel(9, [10], 22, -36, 5, [[0, -1, 2]]), i.addLevel(10, [], 15, -45, 5, [[2, -1, 2]]), i.setPreviousLevels()
-    }, 8804: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.OverlayLevel = void 0;
-        const i = s(3278);
+    },//->Levels
+    8804: t => {
+        const i = getModule(3278);
         t.OverlayLevel = class {
             constructor(e, t, s) {
                 this.elementOffset = [0, 0], this.click = () => {
@@ -1085,9 +1073,9 @@ var e = {
                 null !== this.element && (this.element.remove(), this.element = null)
             }
         }
-    }, 6760: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.OverlayText = void 0;
-        const i = s(3278);
+    },//->OverlayLevel
+    6760: t => {
+        const i = getModule(3278);
         t.OverlayText = class {
             constructor(e, t, s, i, n, o) {
                 this.element = null, this.text = e, this.x = t, this.y = s, this.width = i, this.height = n, this.textSize = o, this.color = "#fec", this.textColor = "#000"
@@ -1109,9 +1097,9 @@ var e = {
                 null !== this.element && (this.element.remove(), this.element = null)
             }
         }
-    }, 6530: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.AccountPage = void 0;
-        const i = s(3446), n = s(3602), o = s(2461), a = s(4723);
+    },//->OverlayText
+    6530: t => {
+        const i = getModule(3446), n = getModule(3602), o = getModule(2461), a = getModule(4723);
 
         class r extends a.Page {
             constructor(e) {
@@ -1128,8 +1116,9 @@ var e = {
         }
 
         t.AccountPage = r
-    }, 3051: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->AccountPage
+    3051: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -1157,9 +1146,8 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.GamePage = void 0;
-        const n = s(3446), o = s(5583), a = s(1154), r = s(8695), l = s(7779), h = s(9303), c = s(403), d = s(8939),
-            u = s(2149), g = s(2461), p = s(2714), m = s(974);
+        let n = getModule(3446), o = getModule(5583), a = getModule(1154), r = getModule(8695), l = getModule(7779), h = getModule(9303), c = getModule(403), d = getModule(8939),
+            u = getModule(2149), g = getModule(2461), p = getModule(2714), m = getModule(974);
         t.GamePage = class {
             constructor(e) {
                 this.resize = () => {
@@ -1181,7 +1169,7 @@ var e = {
             }
 
             dispose() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     this.isDeleted = !0, window.clearInterval(this.saveInterval);
                     const e = (0, p.save)(this.game.gameMap);
                     yield this.saveMap(e), window.removeEventListener("resize", this.resize), this.playerControls.dispose(), this.playerUI.dispose(), this.playerOverlay.dispose(), this.game.dispose(), document.body.removeChild(this.canvasDiv)
@@ -1189,7 +1177,7 @@ var e = {
             }
 
             autosave() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     if (this.isDeleted) return;
                     this.playerUI.showAutoSaveMessage(n.GameText.AUTOSAVING.get());
                     const e = (0, p.save)(this.game.gameMap);
@@ -1198,8 +1186,8 @@ var e = {
             }
 
             saveMap(e) {
-                return i(this, void 0, void 0, (function* () {
-                    if (void 0 === this.mapInfo) return -1;
+                return i(this, undefined, undefined, (function* () {
+                    if (undefined === this.mapInfo) return -1;
                     const t = m.Utils.arrayBufferToBase64(e);
                     if (this.mapInfo.data === t) return 200;
                     yield d.ArrowsDB.write("mapCache", {
@@ -1212,9 +1200,9 @@ var e = {
                 }))
             }
         }
-    }, 8562: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.GuidePage = void 0;
-        const i = s(2413), n = s(332), o = s(4723);
+    },//->GamePage
+    8562: t => {
+        const i = getModule(2413), n = getModule(332), o = getModule(4723);
 
         class a extends o.Page {
             constructor(e) {
@@ -1233,8 +1221,9 @@ var e = {
         }
 
         t.GuidePage = a
-    }, 2543: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->GuidePage
+    2543: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -1262,9 +1251,8 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelPage = void 0;
-        const n = s(2413), o = s(3446), a = s(3295), r = s(5583), l = s(8246), h = s(8695), c = s(9303), d = s(258),
-            u = s(403), g = s(1402), p = s(2461);
+        const n = getModule(2413), o = getModule(3446), a = getModule(3295), r = getModule(5583), l = getModule(8246), h = getModule(8695), c = getModule(9303), d = getModule(258),
+            u = getModule(403), g = getModule(1402), p = getModule(2461);
         t.LevelPage = class {
             constructor(e) {
                 this.levelRights = new l.PlayerAccess, this.resize = () => {
@@ -1299,13 +1287,13 @@ var e = {
             }
 
             showTutorial(e) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const t = yield fetch(`/res/tutorials/${a.LangSettings.getLanguage()}/tutorial-${this.info.id}.html?v=${d.PlayerSettings.version}`);
                     if (!t.ok) return;
                     const s = document.createElement("div");
                     this.sidePanel = s, s.className = "level-side-panel", s.onwheel = e => e.stopPropagation(), s.onmousemove = e => e.stopPropagation(), document.body.appendChild(s);
                     const i = yield t.text();
-                    this.tutorialData = i.split("---"), s.innerHTML = `<h1>${o.GameText.LEVEL.get()} ${this.info.id}</h1>`, this.nextTutorialStep(), void 0 !== e && e(s)
+                    this.tutorialData = i.split("---"), s.innerHTML = `<h1>${o.GameText.LEVEL.get()} ${this.info.id}</h1>`, this.nextTutorialStep(), undefined !== e && e(s)
                 }))
             }
 
@@ -1344,13 +1332,14 @@ var e = {
             }
 
             complete() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     this.isDeleted || (this.dispose(), "unlocked" === this.info.state ? (yield p.Routes.completeLevel(this.info.id), window.location.href = "/levels") : window.location.href = "/levels")
                 }))
             }
         }
-    }, 606: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->LevelPage
+    606: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -1378,9 +1367,8 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LevelsPage = void 0;
-        const n = s(3278), o = s(9010), a = s(304), r = s(5164), l = s(8804), h = s(5583), c = s(9303), d = s(3602),
-            u = s(2461), g = s(4723);
+        const n = getModule(3278), o = getModule(9010), a = getModule(304), r = getModule(5164), l = getModule(8804), h = getModule(5583), c = getModule(9303), d = getModule(3602),
+            u = getModule(2461), g = getModule(4723);
 
         class p extends g.Page {
             constructor(e, t) {
@@ -1408,7 +1396,7 @@ var e = {
             }
 
             makeMap() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const e = yield u.Routes.getLevels();
                     d.PlayerState.completedLevels = e, this.makeRedArrows(17, 6, 17, 4, !0), this.makeRedArrows(17, -2, 17, -4, !0), this.makeRedArrows(17, -10, 17, -12, !0), this.makeRedArrows(14, -15, 5, -15, !1), this.makeRedArrows(20, -15, 29, -15, !1), this.makeObliqueArrows(2, -18, 2, !1, !1), this.makeObliqueArrows(5, -28, 2, !1, !0), this.makeObliqueArrows(32, -18, 2, !0, !1), this.makeObliqueArrows(12, -37, 2, !1, !0), this.makeObliqueArrows(29, -28, 2, !0, !0), this.makeObliqueArrows(22, -37, 2, !0, !0), o.Levels.levels.forEach((e => {
                         this.addLevelOverlay(e.id)
@@ -1431,8 +1419,8 @@ var e = {
 
             addLevelOverlay(e) {
                 const t = o.Levels.levels.get(e), s = o.Levels.levelOverlayInfos.get(e);
-                if (void 0 === t) throw new Error(`Level with id ${e} not found`);
-                if (void 0 === s) throw new Error(`Level overlay with id ${e} not found`);
+                if (undefined === t) throw new Error(`Level with id ${e} not found`);
+                if (undefined === s) throw new Error(`Level overlay with id ${e} not found`);
                 const i = new l.OverlayLevel(t, s, this.onLevelClick);
                 return this.playerOverlay.addLevel(i), this.levelOverlays.set(t.id, i), i
             }
@@ -1480,9 +1468,9 @@ var e = {
         }
 
         t.LevelsPage = p
-    }, 8135: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.LoginPage = void 0;
-        const i = s(3295), n = s(3446), o = s(5583), a = s(2461), r = s(3278), l = s(3737), h = s(3602), c = s(258);
+    },//->LevelsPage
+    8135: t => {
+        const i = getModule(3295), n = getModule(3446), o = getModule(5583), a = getModule(2461), r = getModule(3278), l = getModule(3737), h = getModule(3602), c = getModule(258);
         t.LoginPage = class {
             constructor(e, t, s) {
                 this.CELL_SIZE = 160, this.LEFT_PANEL_WIDTH = .4, this.resize = () => {
@@ -1565,7 +1553,7 @@ var e = {
             }
 
             setChunk(e) {
-                if (void 0 !== this.game.gameMap.getChunk(0, e)) return;
+                if (undefined !== this.game.gameMap.getChunk(0, e)) return;
                 const t = this.game.gameMap.getOrCreateChunk(0, e);
                 for (let s = 0; s < r.CHUNK_SIZE; s++) for (let i = 0; i < r.CHUNK_SIZE; i++) {
                     const n = t.getArrow(s, i), o = s ^ i + Math.abs(e + 2) * r.CHUNK_SIZE;
@@ -1575,12 +1563,13 @@ var e = {
 
             deleteChunk(e) {
                 const t = this.game.gameMap.getChunk(0, e);
-                void 0 !== t && (t.clear(), this.game.gameMap.clearChunkIfEmpty(t))
+                undefined !== t && (t.clear(), this.game.gameMap.clearChunkIfEmpty(t))
             }
         }
-    }, 953: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
-            return new (s || (s = Promise))((function (n, o) {
+    },//->LoginPage
+    953: t => {
+        var i = t && t.__awaiter || function (e, undefined0, undefined1, i) {
+            return new (undefined1 || (undefined1 = Promise))((function (n, o) {
                 function a(e) {
                     try {
                         l(i.next(e))
@@ -1599,16 +1588,15 @@ var e = {
 
                 function l(e) {
                     var t;
-                    e.done ? n(e.value) : (t = e.value, t instanceof s ? t : new s((function (e) {
+                    e.done ? n(e.value) : (t = e.value, t instanceof undefined1 ? t : new undefined1((function (e) {
                         e(t)
                     }))).then(a, r)
                 }
 
-                l((i = i.apply(e, t || [])).next())
+                l((i = i.apply(e, undefined0 || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.MapsPage = void 0;
-        const n = s(3446), o = s(1418), a = s(9676), r = s(8939), l = s(2461), h = s(4723);
+        const n = getModule(3446), o = getModule(1418), a = getModule(9676), r = getModule(8939), l = getModule(2461), h = getModule(4723);
 
         class c extends h.Page {
             constructor(e, t) {
@@ -1628,7 +1616,7 @@ var e = {
             }
 
             loadMaps(e, t) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const s = yield l.Routes.getMapsInfo(), i = [];
                     for (let e = 0; e < s.length; e++) {
                         const t = s[e];
@@ -1637,7 +1625,7 @@ var e = {
                     const n = yield Promise.all(i), o = [];
                     for (let i = 0; i < s.length; i++) {
                         const r = s[i], l = n[i];
-                        void 0 !== l ? (r.data = l, new a.UISavedItem(e, r, t)) : o.push(r.id)
+                        undefined !== l ? (r.data = l, new a.UISavedItem(e, r, t)) : o.push(r.id)
                     }
                     const r = yield l.Routes.getMaps(o);
                     for (let s = 0; s < r.length; s++) {
@@ -1648,23 +1636,23 @@ var e = {
             }
 
             getCachedMapData(e, t) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const s = yield r.ArrowsDB.read("mapCache", e);
-                    if (void 0 !== s && "data" in s && "version" in s && s.version === t && void 0 !== s.data && "string" == typeof s.data) return s.data
+                    if (undefined !== s && "data" in s && "version" in s && s.version === t && undefined !== s.data && "string" == typeof s.data) return s.data
                 }))
             }
 
             cacheMapData(e) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     yield r.ArrowsDB.write("mapCache", {id: e.id, version: e.version, data: e.data})
                 }))
             }
         }
 
         t.MapsPage = c
-    }, 4820: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.MenuPage = void 0;
-        const i = s(3446), n = s(3602);
+    },//->MapsPage
+    4820: t => {
+        const i = getModule(3446), n = getModule(3602);
         t.MenuPage = class {
             constructor(e, t) {
                 this.categories = new Map([["account", [i.GameText.ACCOUNT.get(), "res/icons/icon-user.svg", null]], ["levels", [i.GameText.LEVELS.get(), "res/icons/icon-levels.svg", null]], ["maps", [i.GameText.MAPS.get(), "res/icons/icon-maps.svg", null]], ["guide", [i.GameText.GUIDE.get(), "res/icons/icon-guide.svg", null]], ["settings", [i.GameText.SETTINGS.get(), "res/icons/icon-settings.svg", null]], ["back", [i.GameText.MENU_BACK.get(), "res/icons/menu-back-icon.svg", null]]]), this.action = t, this.page = null, this.mainDiv = document.createElement("div"), document.body.appendChild(this.mainDiv), this.mainDiv.id = "menu-page-main-div", this.sideBar = document.createElement("div"), this.mainDiv.appendChild(this.sideBar), this.sideBar.id = "menu-page-side-bar", this.content = document.createElement("div"), this.mainDiv.appendChild(this.content), this.content.id = "menu-page-content";
@@ -1687,7 +1675,7 @@ var e = {
             addMenuItem(e) {
                 this.selectedCategory = e;
                 const t = this.categories.get(e);
-                if (void 0 === t) return;
+                if (undefined === t) return;
                 const s = t[0], o = t[1], a = document.createElement("div");
                 t[2] = a, a.className = "side-menu-element", this.sideBar.appendChild(a);
                 const r = document.createElement("img");
@@ -1715,8 +1703,9 @@ var e = {
                 }
             }
         }
-    }, 6537: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->MenuPage
+    6537: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -1744,12 +1733,11 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.NameChangePage = void 0;
-        const n = s(3446), o = s(2461), a = s(4723);
+        const n = getModule(3446), o = getModule(2461), a = getModule(4723);
 
         class r extends a.Page {
             constructor(e) {
-                super(e), this.acceptCallback = e => i(this, void 0, void 0, (function* () {
+                super(e), this.acceptCallback = e => i(this, undefined, undefined, (function* () {
                     return e.length < 3 ? n.GameText.NAME_ERROR_TOO_SHORT.get() : e.includes("  ") ? n.GameText.NAME_ERROR_SPACES_COUNT.get() : e.includes("__") ? n.GameText.NAME_ERROR_UNDERSCORES_COUNT.get() : " " === e.charAt(0) || " " === e.at(-1) ? n.GameText.NAME_ERROR_SPACE.get() : e.charAt(0).match(/[0-9]/) ? n.GameText.NAME_ERROR_CANNOT_START_WITH_DIGIT.get() : e.match(/^[A-Za-z0-9_\s]+$/) ? (yield o.Routes.setName(e)) ? (window.location.href = "/maps", "") : n.GameText.NAME_ERROR_EXIST_OR_UNAVAILABLE.get() : n.GameText.NAME_ERROR_CHARS.get()
                 }));
                 const t = document.createElement("div");
@@ -1765,7 +1753,7 @@ var e = {
                 const h = document.createElement("div");
                 h.className = "logout-button", h.innerText = n.GameText.CANCEL.get(), h.onclick = () => o.Routes.logout(), l.appendChild(h);
                 const c = document.createElement("div");
-                c.className = "accept-button", c.innerText = n.GameText.ACCEPT.get(), c.onclick = () => i(this, void 0, void 0, (function* () {
+                c.className = "accept-button", c.innerText = n.GameText.ACCEPT.get(), c.onclick = () => i(this, undefined, undefined, (function* () {
                     const e = a.value;
                     r.innerText = yield this.acceptCallback(e)
                 })), l.appendChild(c)
@@ -1777,8 +1765,9 @@ var e = {
         }
 
         t.NameChangePage = r
-    }, 1494: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->NameChangePage
+    1494: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -1806,14 +1795,13 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Navigation = void 0;
-        const n = s(3446), o = s(3295), a = s(3737), r = s(9010), l = s(3602), h = s(7755), c = s(2461),
-            d = s(6530), u = s(8562), g = s(3051), p = s(2543), m = s(606), v = s(8135), w = s(953), f = s(4820),
-            A = s(6537), y = s(2637), C = s(4913);
+        const n = getModule(3446), o = getModule(3295), a = getModule(3737), r = getModule(9010), l = getModule(3602), h = getModule(7755), c = getModule(2461),
+            d = getModule(6530), u = getModule(8562), g = getModule(3051), p = getModule(2543), m = getModule(606), v = getModule(8135), w = getModule(953), f = getModule(4820),
+            A = getModule(6537), y = getModule(2637), C = getModule(4913);
 
         class S {
             constructor() {
-                this.loginPage = null, this.gamePage = null, this.levelPage = null, this.nameChangePage = null, this.menuPage = null, this.accountPage = null, this.mapsPage = null, this.levelsPage = null, this.guidePage = null, this.settingsPage = null, this.performancePage = null, this.startGameAction = () => i(this, void 0, void 0, (function* () {
+                this.loginPage = null, this.gamePage = null, this.levelPage = null, this.nameChangePage = null, this.menuPage = null, this.accountPage = null, this.mapsPage = null, this.levelsPage = null, this.guidePage = null, this.settingsPage = null, this.performancePage = null, this.startGameAction = () => i(this, undefined, undefined, (function* () {
                     if (yield c.Routes.checkNameChange()) return void this.goToNameChange("go");
                     const e = yield c.Routes.getLevels();
                     l.PlayerState.completedLevels = e, this.goToMaps("go")
@@ -1834,7 +1822,7 @@ var e = {
             }
 
             start() {
-                S.setLanguege(), "/login" === window.location.pathname ? this.goToLogin("start") : "/performance" === window.location.pathname ? this.goToPerformance("start") : "/setname" === window.location.pathname ? this.goToNameChange("start") : c.Routes.checkUser((e => i(this, void 0, void 0, (function* () {
+                S.setLanguege(), "/login" === window.location.pathname ? this.goToLogin("start") : "/performance" === window.location.pathname ? this.goToPerformance("start") : "/setname" === window.location.pathname ? this.goToNameChange("start") : c.Routes.checkUser((e => i(this, undefined, undefined, (function* () {
                     l.PlayerState.userName = e;
                     const t = yield c.Routes.getLevels();
                     l.PlayerState.completedLevels = t, this.goToPath("start")
@@ -1856,14 +1844,14 @@ var e = {
             }
 
             goToNameChange(e) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     (yield c.Routes.checkNameChange()) ? (this.removePages(), document.title = `${n.GameText.SET_NAME.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.nameChangePage = new A.NameChangePage, "go" === e ? window.history.pushState(null, "", "setname") : "start" === e && window.history.replaceState(null, "", "setname")) : this.goToLogin(e)
                 }))
             }
 
             goToLevel(e, t) {
                 const s = r.Levels.levels.get(t);
-                void 0 !== s && "locked" !== s.state ? (this.removePages(), document.title = `${n.GameText.LEVEL.get()} ${t} | ${n.GameText.ARROWS_TITLE.get()}`, this.levelPage = new p.LevelPage(s), r.Levels.startLevel(this.levelPage), "go" === e ? window.history.pushState(null, "", `level-${t}`) : "start" === e && window.history.replaceState(null, "", `level-${t}`)) : this.goToLevels(e)
+                undefined !== s && "locked" !== s.state ? (this.removePages(), document.title = `${n.GameText.LEVEL.get()} ${t} | ${n.GameText.ARROWS_TITLE.get()}`, this.levelPage = new p.LevelPage(s), r.Levels.startLevel(this.levelPage), "go" === e ? window.history.pushState(null, "", `level-${t}`) : "start" === e && window.history.replaceState(null, "", `level-${t}`)) : this.goToLevels(e)
             }
 
             goToPath(e) {
@@ -1877,36 +1865,35 @@ var e = {
             }
 
             removePages() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     null !== this.loginPage && (this.loginPage.dispose(), this.loginPage = null), null !== this.menuPage && (this.menuPage.dispose(), this.menuPage = null), null !== this.gamePage && (yield this.gamePage.dispose(), this.gamePage = null), null !== this.performancePage && (this.performancePage.dispose(), this.performancePage = null), null !== this.nameChangePage && (this.nameChangePage.dispose(), this.nameChangePage = null), null !== this.levelPage && (this.levelPage.dispose(), this.levelPage = null)
                 }))
             }
 
             goToAccount(e) {
                 var t;
-                null !== this.menuPage ? null === (t = this.menuPage.page) || void 0 === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("account", this.doMenuAction)), document.title = `${n.GameText.ACCOUNT.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.accountPage = new d.AccountPage(this.menuPage.getContent()), this.menuPage.page = this.accountPage, "go" === e ? window.history.pushState(null, "", "account") : "start" === e ? window.history.replaceState(null, "", "account") : "return" === e && this.menuPage.setCategory("account")
+                null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("account", this.doMenuAction)), document.title = `${n.GameText.ACCOUNT.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.accountPage = new d.AccountPage(this.menuPage.getContent()), this.menuPage.page = this.accountPage, "go" === e ? window.history.pushState(null, "", "account") : "start" === e ? window.history.replaceState(null, "", "account") : "return" === e && this.menuPage.setCategory("account")
             }
-
             goToMaps(e) {
                 var t;
-                return i(this, void 0, void 0, (function* () {
-                    l.PlayerState.completedLevels.includes(10) ? (null !== this.menuPage ? null === (t = this.menuPage.page) || void 0 === t || t.dispose() : (yield this.removePages(), this.menuPage = new f.MenuPage("maps", this.doMenuAction)), document.title = `${n.GameText.MAPS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.mapsPage = new w.MapsPage((e => this.goToGame("go", e)), this.menuPage.getContent()), this.menuPage.page = this.mapsPage, "go" === e ? window.history.pushState(null, "", "maps") : "start" === e ? window.history.replaceState(null, "", "maps") : "return" === e && this.menuPage.setCategory("maps")) : this.goToLevels(e)
+                return i(this, undefined, undefined, (function* () {
+                    l.PlayerState.completedLevels.includes(10) ? (null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (yield this.removePages(), this.menuPage = new f.MenuPage("maps", this.doMenuAction)), document.title = `${n.GameText.MAPS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.mapsPage = new w.MapsPage((e => this.goToGame("go", e)), this.menuPage.getContent()), this.menuPage.page = this.mapsPage, "go" === e ? window.history.pushState(null, "", "maps") : "start" === e ? window.history.replaceState(null, "", "maps") : "return" === e && this.menuPage.setCategory("maps")) : this.goToLevels(e)
                 }))
             }
 
             goToLevels(e) {
                 var t;
-                null !== this.menuPage ? null === (t = this.menuPage.page) || void 0 === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("levels", this.doMenuAction)), document.title = `${n.GameText.LEVELS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.levelsPage = new m.LevelsPage((e => this.goToLevel("go", e)), this.menuPage.getContent()), this.menuPage.page = this.levelsPage, "go" === e ? window.history.pushState(null, "", "levels") : "start" === e ? window.history.replaceState(null, "", "levels") : "return" === e && this.menuPage.setCategory("levels")
+                null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("levels", this.doMenuAction)), document.title = `${n.GameText.LEVELS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.levelsPage = new m.LevelsPage((e => this.goToLevel("go", e)), this.menuPage.getContent()), this.menuPage.page = this.levelsPage, "go" === e ? window.history.pushState(null, "", "levels") : "start" === e ? window.history.replaceState(null, "", "levels") : "return" === e && this.menuPage.setCategory("levels")
             }
 
             goToGuide(e) {
                 var t;
-                null !== this.menuPage ? null === (t = this.menuPage.page) || void 0 === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("guide", this.doMenuAction)), document.title = `${n.GameText.GUIDE.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.guidePage = new u.GuidePage(this.menuPage.getContent()), this.menuPage.page = this.guidePage, "go" === e ? window.history.pushState(null, "", "guide") : "start" === e ? window.history.replaceState(null, "", "guide") : "return" === e && this.menuPage.setCategory("guide")
+                null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("guide", this.doMenuAction)), document.title = `${n.GameText.GUIDE.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.guidePage = new u.GuidePage(this.menuPage.getContent()), this.menuPage.page = this.guidePage, "go" === e ? window.history.pushState(null, "", "guide") : "start" === e ? window.history.replaceState(null, "", "guide") : "return" === e && this.menuPage.setCategory("guide")
             }
 
             goToSettings(e) {
                 var t;
-                null !== this.menuPage ? null === (t = this.menuPage.page) || void 0 === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("settings", this.doMenuAction)), document.title = `${n.GameText.SETTINGS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.settingsPage = new C.SettingsPage(this.menuPage.getContent()), this.menuPage.page = this.settingsPage, "go" === e ? window.history.pushState(null, "", "settings") : "start" === e ? window.history.replaceState(null, "", "settings") : "return" === e && this.menuPage.setCategory("settings")
+                null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (this.removePages(), this.menuPage = new f.MenuPage("settings", this.doMenuAction)), document.title = `${n.GameText.SETTINGS.get()} | ${n.GameText.ARROWS_TITLE.get()}`, this.settingsPage = new C.SettingsPage(this.menuPage.getContent()), this.menuPage.page = this.settingsPage, "go" === e ? window.history.pushState(null, "", "settings") : "start" === e ? window.history.replaceState(null, "", "settings") : "return" === e && this.menuPage.setCategory("settings")
             }
         }
 
@@ -1914,19 +1901,20 @@ var e = {
             const e = h.AuthGoogle.getAuthURL();
             window.location.href = e
         }
-    }, 4723: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Page = void 0, t.Page = class {
+    },//->Navigation
+    4723: t => {
+        t.Page = class {
             constructor(e) {
-                this.isDeleted = !1, this.mainDiv = document.createElement("div"), this.mainDiv.className = this.getClass(), void 0 !== e ? e.appendChild(this.mainDiv) : document.body.appendChild(this.mainDiv)
+                this.isDeleted = !1, this.mainDiv = document.createElement("div"), this.mainDiv.className = this.getClass(), undefined !== e ? e.appendChild(this.mainDiv) : document.body.appendChild(this.mainDiv)
             }
 
             dispose() {
                 this.isDeleted = !0, this.mainDiv.remove()
             }
         }
-    }, 2637: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PerformancePage = void 0;
-        const i = s(5583);
+    },//->Page
+    2637: t => {
+        const i = getModule(5583);
         t.PerformancePage = class {
             constructor() {
                 this.framesTotal = 100, this.phase = 0, this.frame = 0, this.times = [0, 0, 0, 0, 0, 0], this.update = () => {
@@ -1970,9 +1958,10 @@ var e = {
                 this.times[this.phase - 1] += t - e
             }
         }
-    }, 4913: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.SettingsPage = void 0;
-        const i = s(3446), n = s(3295), o = s(3737), a = s(4723);
+        t.PerformancePage = null;
+    },//->PerformancePage
+    4913: t => {
+        const i = getModule(3446), n = getModule(3295), o = getModule(3737), a = getModule(4723);
 
         class r extends a.Page {
             constructor(e) {
@@ -2016,9 +2005,9 @@ var e = {
         }
 
         t.SettingsPage = r
-    }, 1154: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.GameHistory = void 0;
-        const i = s(7779);
+    },//->SettingsPage
+    1154: t => {
+        const i = getModule(7779);
 
         class n {
             constructor() {
@@ -2053,18 +2042,15 @@ var e = {
         }
 
         t.GameHistory = n, n.MAX_SIZE = 100
-    }, 5583: (e, t, s) => {
-        let N = dd("5583", null, e, t, s); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Game = void 0;
-        const i = s(691), n = s(3278), o = s(4817), a = s(110), r = s(3246), l = s(258);
+    },//->GameHistory
+    5583: t => {
+        const i = getModule(691), n = getModule(3278), o = getModule(4817), a = getModule(110), r = getModule(3246), l = getModule(258);
         t.Game = class {
             constructor(e, t, s) {
-                let N = dd("Game.constructor", this, e, t, s); if (N[0]) return N[1];//:NDD
                 this.updateTime = 0, this.drawTime = 0, this.updatesPerSecond = 0, this.drawsPerSecond = 0, this.focusingTime = 1, this.focusingSpeed = .017, this.focusingOffset = [0, 0], this.focusingScale = 80, this.startingOffset = [0, 0], this.startingScale = 80, this.focusing = !1, this.width = t, this.height = s, this.frame = 0, this.tick = 0, this.playing = !0, this.updateSpeedLevel = 0, this.pasteDirection = 0, this.isSelecting = !1, this.mousePosition = [0, 0], this.gameMap = new o.GameMap, this.selectedMap = new a.SelectedMap, this.scale = 40 * window.devicePixelRatio, this.offset = [0, 0], this.screenUpdated = !0, this.drawPastedArrows = !1, this.render = new r.Render(e)
             }
 
             draw() {
-                let N = dd("Game.draw", this); if (N[0]) return N[1];//:NDD
                 this.updateFocus(), (this.drawPastedArrows || 0 !== this.selectedMap.getSelectedArrows().length) && (this.screenUpdated = !0), l.PlayerSettings.framesToUpdate[this.updateSpeedLevel] > 1 && (this.screenUpdated = !0), this.screenUpdated && this.render.drawBackground(this.scale, [-this.offset[0] / n.CELL_SIZE, -this.offset[1] / n.CELL_SIZE]);
                 const e = this.scale;
                 this.render.prepareArrows(e);
@@ -2105,7 +2091,7 @@ var e = {
                 })), this.isSelecting) {
                     this.render.prepareSolidColor(), this.render.setSolidColor(.5, .5, .75, .25);
                     const e = this.selectedMap.getCurrentSelectedArea();
-                    if (void 0 !== e) {
+                    if (undefined !== e) {
                         const t = e[0] * this.scale + this.offset[0] * this.scale / n.CELL_SIZE,
                             s = e[1] * this.scale + this.offset[1] * this.scale / n.CELL_SIZE, i = e[2] - e[0],
                             o = e[3] - e[1];
@@ -2117,18 +2103,15 @@ var e = {
 
             updateFrame(e = (() => {
             })) {
-                let N = dd("Game.updateFrame", this, e); if (N[0]) return N[1];//:NDD
                 if (this.playing && this.frame % l.PlayerSettings.framesToSkip[this.updateSpeedLevel] == 0) for (let t = 0; t < l.PlayerSettings.framesToUpdate[this.updateSpeedLevel]; t++) this.updateTick(e), performance.now() - this.updateTime > 1e3 && (this.updateTime = performance.now(), this.updatesPerSecond = 0), this.updatesPerSecond++
             }
 
             updateTick(e = (() => {
             })) {
-                let N = dd("Game.updateTick", this, e); if (N[0]) return N[1];//:NDD
                 e(), i.ChunkUpdates.update(this.gameMap), this.tick++
             }
 
             undoChanges(e) {
-                let N = dd("Game.undoChanges", this, e); if (N[0]) return N[1];//:NDD
                 e.changedArrows.forEach((([e, t], s) => {
                     const [i, n] = s.split(",").map((e => parseInt(e, 10)));
                     0 === e.type ? (this.gameMap.removeArrow(i, n, !0), this.selectedMap.deselect(i, n)) : (this.gameMap.resetArrow(i, n, !0), this.gameMap.setArrowType(i, n, e.type, !0), this.gameMap.setArrowRotation(i, n, e.rotation, !0), this.gameMap.setArrowFlipped(i, n, e.flipped, !0))
@@ -2136,7 +2119,6 @@ var e = {
             }
 
             redoChanges(e) {
-                let N = dd("Game.redoChanges", this, e); if (N[0]) return N[1];//:NDD
                 e.changedArrows.forEach((([e, t], s) => {
                     const [i, n] = s.split(",").map((e => parseInt(e, 10)));
                     0 === t.type ? (this.gameMap.removeArrow(i, n, !0), this.selectedMap.deselect(i, n)) : (this.gameMap.resetArrow(i, n, !0), this.gameMap.setArrowType(i, n, t.type, !0), this.gameMap.setArrowRotation(i, n, t.rotation, !0), this.gameMap.setArrowFlipped(i, n, t.flipped, !0))
@@ -2144,12 +2126,10 @@ var e = {
             }
 
             clearSignals() {
-                let N = dd("Game.clearSignals", this); if (N[0]) return N[1];//:NDD
                 i.ChunkUpdates.clearSignals(this.gameMap)
             }
 
             focusOnBox(e, t, s, i, o = 0, a = 1) {
-                let N = dd("Game.focusOnBox", this, e, t, s, i, o, a); if (N[0]) return N[1];//:NDD
                 const r = (s += o) - (e -= o), l = (i += o) - (t -= o),
                     h = Math.min(this.width / r, this.height / l), c = (e + s) * n.CELL_SIZE / 2,
                     d = (t + i) * n.CELL_SIZE / 2;
@@ -2158,7 +2138,6 @@ var e = {
             }
 
             updateFocus() {
-                let N = dd("Game.updateFocus", this); if (N[0]) return N[1];//:NDD
                 if (!this.focusing) return;
                 this.focusingTime >= 1 && (this.focusingTime = 1, this.focusing = !1);
                 const e = .5 * -Math.cos(this.focusingTime * Math.PI) + .5;
@@ -2166,25 +2145,21 @@ var e = {
             }
 
             setScale(e, t) {
-                let N = dd("Game.setScale", this, e, t); if (N[0]) return N[1];//:NDD
                 const s = t[0] * n.CELL_SIZE * window.devicePixelRatio / this.scale - this.offset[0],
                     i = t[1] * n.CELL_SIZE * window.devicePixelRatio / this.scale - this.offset[1];
                 this.offset[0] = t[0] * n.CELL_SIZE * window.devicePixelRatio / e - s, this.offset[1] = t[1] * n.CELL_SIZE * window.devicePixelRatio / e - i, this.scale = e, this.screenUpdated = !0
             }
 
             resize(e, t) {
-                let N = dd("Game.resize", this, e, t); if (N[0]) return N[1];//:NDD
                 this.width = e, this.height = t, this.render.resize(e, t), this.screenUpdated = !0
             }
 
             dispose() {
-                let N = dd("Game.dispose", this); if (N[0]) return N[1];//:NDD
                 this.gameMap.clear(), this.selectedMap.dispose(), this.render.dispose()
             }
         }
-    }, 8246: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerAccess = void 0;
-
+    },//->Game
+    8246: t => {
         class s {
             constructor() {
                 this.arrowGroups = [[1, 2, 3, 4, 5], [6, 7, 8, 9], [10, 11, 12, 13, 14], [15, 16, 17, 18, 19], [20, 21, 24]], this.canMove = !0, this.canZoom = !0, this.canPause = !0, this.canOpenMenu = !0, this.canChangeSpeed = !0, this.canSetArrows = !0, this.canDelete = !0, this.canRotate = !0, this.canFlip = !0, this.canSelect = !0, this.canCopy = !0, this.canPaste = !0, this.canPick = !0, this.canUndo = !0, this.canClearSignals = !0, this.canRunOneTick = !0
@@ -2220,8 +2195,9 @@ var e = {
         }
 
         t.PlayerAccess = s
-    }, 8695: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->PlayerAccess
+    8695: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -2249,8 +2225,7 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerControls = void 0;
-        const n = s(7403), o = s(8463), a = s(82), r = s(3278), l = s(8939), h = s(8246), c = s(258);
+        const n = getModule(7403), o = getModule(8463), a = getModule(82), r = getModule(3278), l = getModule(8939), h = getModule(8246), c = getModule(258);
         t.PlayerControls = class {
             constructor(e, t, s, i = null) {
                 this.onPaste = () => {
@@ -2269,7 +2244,7 @@ var e = {
                     if ("KeyQ" === e) this.pickArrow(); else if ("Backquote" === e) this.takeCursor(); else if ("Space" === e) this.togglePause(); else if ("Enter" === e) this.runOneTick(); else if ("KeyZ" === e) null !== this.history && (s ? this.redo() : this.undo()); else if ("KeyY" === e) this.redo(); else if ("KeyX" === e) this.cutArrows(); else if ("KeyF" === e) {
                         if (this.freeCursor) {
                             const e = this.getArrowByMousePosition();
-                            void 0 !== e && (this.flipDirection = !e.flipped, this.game.screenUpdated = !0)
+                            undefined !== e && (this.flipDirection = !e.flipped, this.game.screenUpdated = !0)
                         }
                     } else if ("Backspace" === e) this.deleteSelectedArrows(); else if ("KeyC" === e) this.keyboardHandler.getCtrlPressed() || this.copyArrows(); else if ("KeyV" === e) this.keyboardHandler.getCtrlPressed() || this.pasteArrows(); else if ("KeyH" === e && this.playerAccess.canMove) {
                         const e = this.game.width / this.game.scale, t = this.game.height / this.game.scale;
@@ -2280,7 +2255,7 @@ var e = {
                     this.playerUI.isMenuOpen() || "KeyE" === e && (this.game.selectedMap.updateSelectionFromCurrentSelection(), this.game.screenUpdated = !0)
                 }, this.leftClickCallback = () => {
                     const e = this.getArrowByMousePosition(), t = this.keyboardHandler.getShiftPressed();
-                    void 0 !== e && this.freeCursor && !t && (21 !== e.type && 24 !== e.type || (0 === e.signal || this.game.playing ? e.signal = 5 : e.signal = 0, this.game.screenUpdated = !0))
+                    undefined !== e && this.freeCursor && !t && (21 !== e.type && 24 !== e.type || (0 === e.signal || this.game.playing ? e.signal = 5 : e.signal = 0, this.game.screenUpdated = !0))
                 }, this.wheelCallback = e => {
                     this.playerUI.isMenuOpen() || (this.wheelDelta += e)
                 }, this.pasteEvent = e => {
@@ -2319,7 +2294,7 @@ var e = {
                     this.game.setScale(40 * window.devicePixelRatio, [e, t])
                 } else this.keyboardZoomVelocity -= 5;
                 const a = this.game.gameMap.getArrow(i, n);
-                void 0 === a || !this.freeCursor || 21 !== a.type && 24 !== a.type ? document.body.style.cursor = "default" : document.body.style.cursor = "pointer", 0 !== this.keyboardZoomVelocity && (Math.abs(this.keyboardZoomVelocity) < .01 && (this.keyboardZoomVelocity = 0), this.keyboardZoomVelocity *= .9, this.handleZoom(this.keyboardZoomVelocity, !1)), this.updateControlsHints()
+                undefined === a || !this.freeCursor || 21 !== a.type && 24 !== a.type ? document.body.style.cursor = "default" : document.body.style.cursor = "pointer", 0 !== this.keyboardZoomVelocity && (Math.abs(this.keyboardZoomVelocity) < .01 && (this.keyboardZoomVelocity = 0), this.keyboardZoomVelocity *= .9, this.handleZoom(this.keyboardZoomVelocity, !1)), this.updateControlsHints()
             }
 
             dispose() {
@@ -2432,7 +2407,7 @@ var e = {
             }
 
             copyArrows() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     if (!this.playerAccess.canCopy) return;
                     if (0 === this.game.selectedMap.getCount()) return;
                     const e = this.game.selectedMap.copyFromGameMap(this.game.gameMap);
@@ -2444,7 +2419,7 @@ var e = {
             }
 
             pasteArrows() {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     if (!this.playerAccess.canPaste) return;
                     const e = yield l.ArrowsDB.read("clipboard", 1);
                     if (null == e || !("data" in e)) return;
@@ -2460,7 +2435,7 @@ var e = {
             pickArrow() {
                 if (!this.playerAccess.canPick) return;
                 const e = this.getArrowByMousePosition();
-                void 0 !== e && 0 !== e.type && e.canBeEdited ? (this.takeArrow(e.type), this.game.selectedMap.rotateOrFlipArrows(e.rotation, e.flipped)) : this.takeCursor()
+                undefined !== e && 0 !== e.type && e.canBeEdited ? (this.takeArrow(e.type), this.game.selectedMap.rotateOrFlipArrows(e.rotation, e.flipped)) : this.takeCursor()
             }
 
             runOneTick() {
@@ -2471,20 +2446,21 @@ var e = {
                 this.playerAccess.canClearSignals && (this.game.clearSignals(), this.game.screenUpdated = !0)
             }
         }
-    }, 7779: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerMapAction = void 0, t.PlayerMapAction = class {
+    },//->PlayerControls
+    7779: t => {
+        t.PlayerMapAction = class {
             constructor() {
                 this.changedArrows = new Map
             }
 
             addChangedArrow(e, t, s, i) {
                 const n = `${e},${t}`, o = this.changedArrows.get(n);
-                void 0 !== o && (s = o[0]), this.changedArrows.set(n, [s, i])
+                undefined !== o && (s = o[0]), this.changedArrows.set(n, [s, i])
             }
         }
-    }, 9303: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerOverlay = void 0;
-        const i = s(6760);
+    },//->PlayerMapAction
+    9303: t => {
+        const i = getModule(6760);
         t.PlayerOverlay = class {
             constructor(e, t) {
                 this.overlayTexts = [], this.overlayLevels = [], this.canvasDiv = e, this.game = t
@@ -2518,21 +2494,20 @@ var e = {
                 this.overlayLevels = []
             }
         }
-    }, 258: (e, t) => {
-        var s;
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerSettings = void 0, function (e) {
+    },//->PlayerOverlay
+    258: t => {
+        ((e) => {
             e.version = "1_2_1", e.arrowAtlasImage = new Image, e.levelArrows = [22, 23], e.framesToSkip = [20, 5, 1, 1, 1, 1], e.framesToUpdate = [1, 1, 1, 5, 20, 100]
-        }(s || (t.PlayerSettings = s = {}))
-    }, 3602: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerState = void 0;
-
-        class s {
+        })(t.PlayerSettings = {})
+    },//->PlayerSettings
+    3602: t => {
+        t.PlayerState = {
+            userName: "",
+            completedLevels:[]
         }
-
-        t.PlayerState = s, s.userName = "", s.completedLevels = []
-    }, 403: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.PlayerUI = void 0;
-        const i = s(3446), n = s(9770), o = s(503), a = s(6709), r = s(3516), l = s(9237), h = s(258);
+    },//->PlayerState
+    403: t => {
+        const i = getModule(3446), n = getModule(9770), o = getModule(503), a = getModule(6709), r = getModule(3516), l = getModule(9237), h = getModule(258);
         t.PlayerUI = class {
             constructor(e) {
                 this.mapInfo = e, this.toolbarController = new l.UIToolbarController([[]]), this.pauseSign = new a.UIPauseSign(document.body), this.menu = null, this.speedController = null, this.controlsHint = null, this.autoSaveMessage = document.createElement("span"), this.autoSaveMessage.className = "ui-text-message", document.body.appendChild(this.autoSaveMessage)
@@ -2559,7 +2534,7 @@ var e = {
             }
 
             toggleMenu(e) {
-                void 0 !== this.mapInfo && (null === this.menu || this.menu.getIsRemoved() ? this.menu = new o.UIMenu(document.body, this.mapInfo, e) : (this.menu.remove(), this.menu = null))
+                undefined !== this.mapInfo && (null === this.menu || this.menu.getIsRemoved() ? this.menu = new o.UIMenu(document.body, this.mapInfo, e) : (this.menu.remove(), this.menu = null))
             }
 
             showAutoSaveMessage(e, t = !1) {
@@ -2587,73 +2562,61 @@ var e = {
 
             dispose() {
                 var e, t;
-                this.toolbarController.remove(), this.pauseSign.remove(), null === (e = this.speedController) || void 0 === e || e.remove(), this.autoSaveMessage.remove(), null === (t = this.controlsHint) || void 0 === t || t.remove(), null !== this.menu && this.menu.remove()
+                this.toolbarController.remove(), this.pauseSign.remove(), null === (e = this.speedController) || undefined === e || e.remove(), this.autoSaveMessage.remove(), null === (t = this.controlsHint) || undefined === t || t.remove(), null !== this.menu && this.menu.remove()
             }
         }
-    }, 2845: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.QUAD_INDICES = t.QUAD_POSITIONS = void 0, t.QUAD_POSITIONS = [0, 0, 1, 0, 1, 1, 0, 1], t.QUAD_INDICES = [0, 1, 2, 0, 2, 3]
-    }, 3246: (e, t, s) => {
-        let N = dd("3246", null, e, t, s); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Render = void 0;
-        const i = s(258), n = s(2845), o = s(7504), a = s(3713), r = s(7023), l = s(5154);
+    },//->PlayerUI
+    2845: t => {
+        t.QUAD_POSITIONS = [0, 0, 1, 0, 1, 1, 0, 1], t.QUAD_INDICES = [0, 1, 2, 0, 2, 3]
+    },//->(QUAD_INDICES,QUAD_POSITIONS)
+    3246: t => {
+        const i = getModule(258), n = getModule(2845), o = getModule(7504), a = getModule(3713), r = getModule(7023), l = getModule(5154);
         t.Render = class {
             constructor(e) {
-                let N = dd("Render.constructor", this, e); if (N[0]) return N[1];//:NDD
                 this.lastArrowType = 0, this.lastArrowSignal = 0, this.lastArrowRotation = 0, this.lastArrowFlipped = !1, this.gl = e, this.positionBuffer = null, this.indexBuffer = null, this.arrowAtlas = null, this.resize(this.gl.canvas.width, this.gl.canvas.height), this.initBuffers(), this.arrowShader = new o.ArrowShader, this.arrowShader.updateProgram(this.gl), this.backgroundShader = new a.BackgroundShader, this.backgroundShader.updateProgram(this.gl), this.solidColorShader = new r.SolidColorShader, this.solidColorShader.updateProgram(this.gl), this.textureShader = new l.TextureShader, this.textureShader.updateProgram(this.gl), this.createArrowTexture(i.PlayerSettings.arrowAtlasImage), this.gl.enable(this.gl.BLEND), this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA), this.gl.pixelStorei(this.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, !0), this.backgroundTexture = null, this.backgroundFrameBuffer = null, this.initBackgroundTexture()
             }
 
             resize(e, t) {
-                let N = dd("Render.resize", this, e, t); if (N[0]) return N[1];//:NDD
                 this.gl.canvas.width = e, this.gl.canvas.height = t, this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height)
             }
 
             prepareArrows(e) {
-                let N = dd("Render.prepareArrows", this, e); if (N[0]) return N[1];//:NDD
                 this.gl.useProgram(this.arrowShader.getProgram()), this.gl.bindTexture(this.gl.TEXTURE_2D, this.arrowAtlas), this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer), this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer), this.gl.enableVertexAttribArray(this.arrowShader.getPositionAttribute()), this.gl.vertexAttribPointer(this.arrowShader.getPositionAttribute(), 2, this.gl.FLOAT, !1, 0, 0), this.gl.uniform2f(this.arrowShader.getResolutionUniform(), this.gl.canvas.width, this.gl.canvas.height), this.gl.uniform1f(this.arrowShader.getSizeUniform(), e), this.gl.uniform1f(this.arrowShader.getSpriteSizeUniform(), 1 / 8)
             }
 
             prepareTextures(e, t = 1) {
-                let N = dd("Render.prepareTextures", this, e, t); if (N[0]) return N[1];//:NDD
                 this.gl.bindTexture(this.gl.TEXTURE_2D, e), this.gl.useProgram(this.textureShader.getProgram()), this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer), this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer), this.gl.enableVertexAttribArray(this.textureShader.getPositionAttribute()), this.gl.vertexAttribPointer(this.textureShader.getPositionAttribute(), 2, this.gl.FLOAT, !1, 0, 0), this.gl.uniform2f(this.textureShader.getResolutionUniform(), this.gl.canvas.width, this.gl.canvas.height), this.gl.uniform1f(this.textureShader.getTilesUniform(), t)
             }
 
             disableTextures() {
-                let N = dd("Render.disableTextures", this); if (N[0]) return N[1];//:NDD
                 this.gl.disableVertexAttribArray(this.textureShader.getPositionAttribute()), this.gl.bindTexture(this.gl.TEXTURE_2D, null)
             }
 
             setArrowAlpha(e) {
-                let N = dd("Render.setArrowAlpha", this, e); if (N[0]) return N[1];//:NDD
                 this.gl.uniform1f(this.arrowShader.getAlphaUniform(), e)
             }
 
             disableArrows() {
-                let N = dd("Render.disableArrows", this); if (N[0]) return N[1];//:NDD
                 this.gl.disableVertexAttribArray(this.arrowShader.getPositionAttribute())
             }
 
             prepareSolidColor() {
-                let N = dd("Render.prepareSolidColor", this); if (N[0]) return N[1];//:NDD
                 this.gl.useProgram(this.solidColorShader.getProgram()), this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer), this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer), this.gl.enableVertexAttribArray(this.solidColorShader.getPositionAttribute()), this.gl.vertexAttribPointer(this.solidColorShader.getPositionAttribute(), 2, this.gl.FLOAT, !1, 0, 0), this.gl.uniform2f(this.solidColorShader.getResolutionUniform(), this.gl.canvas.width, this.gl.canvas.height)
             }
 
             disableSolidColor() {
-                let N = dd("Render.disableSolidColor", this); if (N[0]) return N[1];//:NDD
                 this.gl.disableVertexAttribArray(this.solidColorShader.getPositionAttribute())
             }
 
             setSolidColor(e, t, s, i) {
-                let N = dd("Render.setSolidColor", this, e, t, s, i); if (N[0]) return N[1];//:NDD
                 this.gl.uniform4f(this.solidColorShader.getColorUniform(), e, t, s, i)
             }
 
             drawSolidColor(e, t, s, i) {
-                let N = dd("Render.drawSolidColor", this, e, t, s, i); if (N[0]) return N[1];//:NDD
                 s < 0 && (e -= s = -s), i < 0 && (t -= i = -i), this.gl.uniform4f(this.solidColorShader.getTransformUniform(), e, t, s, i), this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0)
             }
 
             drawArrow(e, t, s, i, n, o) {
-                let N = dd("Render.drawArrow", this, e, t, s, i, n, o); if (N[0]) return N[1];//:NDD
                 if ((s -= 1) !== this.lastArrowType) {
                     const e = s / 8 % 1, t = ~~(s / 8) / 8;
                     this.gl.uniform2f(this.arrowShader.getSpritePositionUniform(), e, t), this.lastArrowType = s
@@ -2662,7 +2625,6 @@ var e = {
             }
 
             drawBackground(e, t) {
-                let N = dd("Render.drawBackground", this, e, t); if (N[0]) return N[1];//:NDD
                 const s = 16;
                 this.prepareTextures(this.backgroundTexture, 2);
                 const i = Math.ceil(this.gl.canvas.width / (s * e)) + 1,
@@ -2676,158 +2638,126 @@ var e = {
             }
 
             drawTexture(e, t, s) {
-                let N = dd("Render.drawTexture", this, e, t, s); if (N[0]) return N[1];//:NDD
                 this.gl.uniform3f(this.textureShader.getTransformUniform(), e, t, s), this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0)
             }
 
             createArrowTexture(e) {
-                let N = dd("Render.createArrowTexture", this, e); if (N[0]) return N[1];//:NDD
                 const t = this.gl.createTexture();
                 this.arrowAtlas = t, null !== t && (this.gl.bindTexture(this.gl.TEXTURE_2D, t), this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, this.gl.RGBA, this.gl.UNSIGNED_BYTE, e), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.CLAMP_TO_EDGE), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.CLAMP_TO_EDGE), this.gl.generateMipmap(this.gl.TEXTURE_2D))
             }
 
             dispose() {
-                let N = dd("Render.dispose", this); if (N[0]) return N[1];//:NDD
                 var e;
-                this.gl.deleteBuffer(this.positionBuffer), this.gl.deleteBuffer(this.indexBuffer), null !== this.arrowAtlas && this.gl.deleteTexture(this.arrowAtlas), this.gl.deleteTexture(this.backgroundTexture), this.gl.deleteFramebuffer(this.backgroundFrameBuffer), this.arrowShader.dispose(this.gl), this.backgroundShader.dispose(this.gl), this.solidColorShader.dispose(this.gl), this.textureShader.dispose(this.gl), null === (e = this.gl.getExtension("WEBGL_lose_context")) || void 0 === e || e.loseContext()
+                this.gl.deleteBuffer(this.positionBuffer), this.gl.deleteBuffer(this.indexBuffer), null !== this.arrowAtlas && this.gl.deleteTexture(this.arrowAtlas), this.gl.deleteTexture(this.backgroundTexture), this.gl.deleteFramebuffer(this.backgroundFrameBuffer), this.arrowShader.dispose(this.gl), this.backgroundShader.dispose(this.gl), this.solidColorShader.dispose(this.gl), this.textureShader.dispose(this.gl), null === (e = this.gl.getExtension("WEBGL_lose_context")) || undefined === e || e.loseContext()
             }
 
             initBuffers() {
-                let N = dd("Render.initBuffers", this); if (N[0]) return N[1];//:NDD
                 this.positionBuffer = this.gl.createBuffer(), this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer), this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(n.QUAD_POSITIONS), this.gl.STATIC_DRAW), this.indexBuffer = this.gl.createBuffer(), this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer), this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(n.QUAD_INDICES), this.gl.STATIC_DRAW)
             }
 
             initBackgroundTexture() {
-                let N = dd("Render.initBackgroundTexture", this); if (N[0]) return N[1];//:NDD
                 this.backgroundTexture = this.gl.createTexture(), this.gl.bindTexture(this.gl.TEXTURE_2D, this.backgroundTexture), this.gl.texImage2D(this.gl.TEXTURE_2D, 0, this.gl.RGBA, 1024, 1024, 0, this.gl.RGBA, this.gl.UNSIGNED_BYTE, null), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_MIN_FILTER, this.gl.LINEAR_MIPMAP_LINEAR), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_S, this.gl.REPEAT), this.gl.texParameteri(this.gl.TEXTURE_2D, this.gl.TEXTURE_WRAP_T, this.gl.REPEAT), this.backgroundFrameBuffer = this.gl.createFramebuffer(), this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, this.backgroundFrameBuffer), this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, this.backgroundTexture, 0), this.gl.viewport(0, 0, 1024, 1024), this.prepareBackgroundOrigin(), this.drawBackgroundOrigin(8, [0, 0]), this.disableBackgroundOrigin(), this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height), this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null), this.gl.generateMipmap(this.gl.TEXTURE_2D), this.gl.bindTexture(this.gl.TEXTURE_2D, null)
             }
 
             drawBackgroundOrigin(e, t) {
-                let N = dd("Render.drawBackgroundOrigin", this, e, t); if (N[0]) return N[1];//:NDD
                 this.gl.uniform1f(this.backgroundShader.getScaleUniform(), e), this.gl.uniform2fv(this.backgroundShader.getOffsetUniform(), t), this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0)
             }
 
             prepareBackgroundOrigin() {
-                let N = dd("Render.prepareBackgroundOrigin", this); if (N[0]) return N[1];//:NDD
                 this.gl.useProgram(this.backgroundShader.getProgram()), this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.positionBuffer), this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer), this.gl.enableVertexAttribArray(this.backgroundShader.getPositionAttribute()), this.gl.vertexAttribPointer(this.backgroundShader.getPositionAttribute(), 2, this.gl.FLOAT, !1, 0, 0)
             }
 
             disableBackgroundOrigin() {
-                let N = dd("Render.disableBackgroundOrigin", this); if (N[0]) return N[1];//:NDD
                 this.gl.disableVertexAttribArray(this.backgroundShader.getPositionAttribute())
             }
         }
-    }, 7504: (e, t, s) => {
-        let N = dd("7504", null, e, t, s); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ArrowShader = void 0;
-        const i = s(7377);
+    },//->Render
+    7504: t => {
+        const i = getModule(7377);
 
         class n extends i.Shader {
             constructor() {
                 super(...arguments), this.positionUniform = null, this.alphaUniform = null, this.signalUniform = null, this.rotationUniform = null, this.sizeUniform = null, this.spriteSizeUniform = null, this.spritePositionUniform = null
-                let N = dd("ArrowShader.constructor", this); if (N[0]) return N[1];//:NDD
             }
 
             updateProgram(e) {
-                let N = dd("ArrowShader.updateProgram", this, e); if (N[0]) return N[1];//:NDD
                 super.updateProgram(e), null !== this.program && (this.positionUniform = e.getUniformLocation(this.program, "u_position"), this.alphaUniform = e.getUniformLocation(this.program, "u_alpha"), this.signalUniform = e.getUniformLocation(this.program, "u_signal"), this.rotationUniform = e.getUniformLocation(this.program, "u_rotation"), this.sizeUniform = e.getUniformLocation(this.program, "u_size"), this.spriteSizeUniform = e.getUniformLocation(this.program, "u_spriteSize"), this.spritePositionUniform = e.getUniformLocation(this.program, "u_spritePosition"))
             }
 
             getPositionUniform() {
-                let N = dd("ArrowShader.getPositionUniform", this); if (N[0]) return N[1];//:NDD
                 return this.positionUniform
             }
 
             getAlphaUniform() {
-                let N = dd("ArrowShader.getAlphaUniform", this); if (N[0]) return N[1];//:NDD
                 return this.alphaUniform
             }
 
             getSignalUniform() {
-                let N = dd("ArrowShader.getSignalUniform", this); if (N[0]) return N[1];//:NDD
                 return this.signalUniform
             }
 
             getRotationUniform() {
-                let N = dd("ArrowShader.getRotationUniform", this); if (N[0]) return N[1];//:NDD
                 return this.rotationUniform
             }
 
             getSizeUniform() {
-                let N = dd("ArrowShader.getSizeUniform", this); if (N[0]) return N[1];//:NDD
                 return this.sizeUniform
             }
 
             getSpriteSizeUniform() {
-                let N = dd("ArrowShader.getSpriteSizeUniform", this); if (N[0]) return N[1];//:NDD
                 return this.spriteSizeUniform
             }
 
             getSpritePositionUniform() {
-                let N = dd("ArrowShader.getSpritePositionUniform", this); if (N[0]) return N[1];//:NDD
                 return this.spritePositionUniform
             }
 
             makeVertexShader() {
-                let N = dd("ArrowShader.makeVertexShader", this); if (N[0]) return N[1];//:NDD
                 return "\n    attribute vec2 a_position;\n    \n    uniform vec2 u_resolution;\n    uniform vec2 u_position;\n    uniform float u_size;\n    uniform vec2 u_rotation;\n\n    varying vec2 v_texcoord;\n\n    mat2 rot(float a) {\n      float s = sin(a);\n      float c = cos(a);\n      return mat2(c, -s, s, c);\n    }\n\n    void main() {\n      v_texcoord = (a_position * 2.0 - 1.0) * rot(u_rotation.x) * 0.5 + 0.5;\n      if (u_rotation.y > 0.5) v_texcoord.x = 1.0 - v_texcoord.x;\n      float aspect = u_resolution.y / u_resolution.x;\n      vec2 size = vec2(u_size) / u_resolution.y * 2.0;\n      size.x *= aspect;\n      vec2 position = u_position / u_resolution.y * 2.0;\n      position.x = position.x * aspect - 1.0;\n      position.y = -position.y - size.y + 1.0;\n      gl_Position = vec4(a_position * size + position, 0.0, 1.0);\n    }"
             }
 
             makeFragmentShader() {
-                let N = dd("ArrowShader.makeFragmentShader", this); if (N[0]) return N[1];//:NDD
                 return "\n    precision lowp float;\n\n    varying vec2 v_texcoord;\n\n    uniform sampler2D u_texture;\n    uniform float u_alpha;\n    uniform int u_signal;\n    uniform vec2 u_spritePosition;\n    uniform float u_spriteSize;\n\n    const vec2 border = vec2(0.475);\n\n    void main() {\n      vec4 signalColors[6];\n      vec4 signalColor;\n      if (u_signal == 0) signalColor = vec4(1.0, 1.0, 1.0, 1.0);\n      if (u_signal == 1) signalColor = vec4(1.0, 0.0, 0.0, 1.0);\n      if (u_signal == 2) signalColor = vec4(0.3, 0.5, 1.0, 1.0);\n      if (u_signal == 3) signalColor = vec4(1.0, 1.0, 0.0, 1.0);\n      if (u_signal == 4) signalColor = vec4(0.0, 0.8, 0.0, 1.0);\n      if (u_signal == 5) signalColor = vec4(1.0, 0.8, 0.2, 1.0);\n      if (u_signal == 6) signalColor = vec4(1.0, 0.2, 1.0, 1.0);\n      vec2 uv = v_texcoord;\n      uv.y = 1.0 - v_texcoord.y;\n      vec4 color = texture2D(u_texture, uv * u_spriteSize + u_spritePosition);\n      color = mix(color, signalColor, 1.0 - color.a);\n      color.a = 1.0;\n      uv = abs(uv - 0.5);\n      float borderColor = 1.0 - float(any(greaterThan(uv, border))) * 0.2;\n      color.rgb *= borderColor;\n      color.a *= u_alpha;\n      gl_FragColor = color;\n    }"
             }
         }
 
         t.ArrowShader = n
-    }, 3713: (e, t, s) => {
-        let N = dd("3713", null, e, t, s); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.BackgroundShader = void 0;
-        const i = s(7377);
-
-        class n extends i.Shader {
+    },//->ArrowShader
+    3713: t => {
+        const i = getModule(7377);
+        t.BackgroundShader = class extends i.Shader {
             constructor() {
                 super(...arguments), this.scaleUniform = null, this.offsetUniform = null
-                let N = dd("BackgroundShader.constructor", this); if (N[0]) return N[1];//:NDD
             }
 
             updateProgram(e) {
-                let N = dd("BackgroundShader.updateProgram", this, e); if (N[0]) return N[1];//:NDD
                 super.updateProgram(e), null !== this.program && (this.scaleUniform = e.getUniformLocation(this.program, "u_scale"), this.offsetUniform = e.getUniformLocation(this.program, "u_offset"))
             }
 
             getScaleUniform() {
-                let N = dd("BackgroundShader.getScaleUniform", this); if (N[0]) return N[1];//:NDD
                 return this.scaleUniform
             }
 
             getOffsetUniform() {
-                let N = dd("BackgroundShader.getOffsetUniform", this); if (N[0]) return N[1];//:NDD
                 return this.offsetUniform
             }
 
             makeVertexShader() {
-                let N = dd("BackgroundShader.makeVertexShader", this); if (N[0]) return N[1];//:NDD
                 return "\n    attribute vec2 a_position;\n\n    varying vec2 v_texcoord;\n\n    void main() {\n      v_texcoord = a_position;\n      vec2 position = a_position * 2.0 - 1.0;\n      gl_Position = vec4(position, 0.0, 1.0);\n    }"
             }
 
             makeFragmentShader() {
-                let N = dd("BackgroundShader.makeFragmentShader", this); if (N[0]) return N[1];//:NDD
                 return "\n    precision lowp float;\n\n    varying vec2 v_texcoord;\n\n    uniform vec2 u_offset;\n    uniform float u_scale;\n\n    void main() {\n      vec2 uv = v_texcoord;\n      uv.y += 0.05 / u_scale;\n      vec2 grid = fract(uv * u_scale + u_offset) - 0.05;\n      float color = 1.0 - step(min(grid.x, grid.y), 0.0) * 0.2;\n      gl_FragColor = vec4(vec3(color), 1.0);\n    }"
             }
         }
-
-        t.BackgroundShader = n
-    }, 7377: (e, t) => {
-        let N = dd("7377", null, e, t); if (N[0]) return N[1];//:NDD
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Shader = void 0, t.Shader = class {
+    },//->BackgroundShader
+    7377: t => {
+        t.Shader = class {
             constructor() {
-                let N = dd("Shader.constructor", this); if (N[0]) return N[1];//:NDD
                 this.program = null, this.positionAttribute = -1, this.resolutionUniform = null
             }
 
             updateProgram(e) {
-                let N = dd("Shader.updateProgram", this, e); if (N[0]) return N[1];//:NDD
                 const t = e.createShader(e.VERTEX_SHADER);
                 if (null === t) return;
                 e.shaderSource(t, this.makeVertexShader()), e.compileShader(t);
@@ -2843,28 +2773,24 @@ var e = {
             }
 
             getProgram() {
-                let N = dd("Shader.getProgram", this); if (N[0]) return N[1];//:NDD
                 return this.program
             }
 
             getPositionAttribute() {
-                let N = dd("Shader.getPositionAttribute", this); if (N[0]) return N[1];//:NDD
                 return this.positionAttribute
             }
 
             getResolutionUniform() {
-                let N = dd("Shader.getResolutionUniform", this); if (N[0]) return N[1];//:NDD
                 return this.resolutionUniform
             }
 
             dispose(e) {
-                let N = dd("Shader.dispose", this); if (N[0]) return N[1];//:NDD
                 null !== this.program && e.deleteProgram(this.program)
             }
         }
-    }, 7023: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.SolidColorShader = void 0;
-        const i = s(7377);
+    },//->Shader
+    7023: t => {
+        const i = getModule(7377);
 
         class n extends i.Shader {
             constructor() {
@@ -2893,9 +2819,9 @@ var e = {
         }
 
         t.SolidColorShader = n
-    }, 5154: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.TextureShader = void 0;
-        const i = s(7377);
+    },//->SolidColorShader
+    5154: t => {
+        const i = getModule(7377);
 
         class n extends i.Shader {
             constructor() {
@@ -2932,9 +2858,9 @@ var e = {
         }
 
         t.TextureShader = n
-    }, 332: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIArrowInfo = void 0;
-        const i = s(2413), n = s(3446), o = s(9148);
+    },//->TextureShader
+    332: t => {
+        const i = getModule(2413), n = getModule(3446), o = getModule(9148);
 
         class a extends o.UIComponent {
             constructor(e, t) {
@@ -2942,7 +2868,7 @@ var e = {
                     const t = e.match(/#\w/);
                     if (null === t || 0 === t.length) return "";
                     const s = t[0].at(1);
-                    if (void 0 === s) return "";
+                    if (undefined === s) return "";
                     let i = "#000";
                     "r" === s ? i = "#f00" : "b" === s && (i = "#00f");
                     const n = e.match(/\((.+)\)/);
@@ -2977,8 +2903,9 @@ var e = {
         }
 
         t.UIArrowInfo = a
-    }, 9148: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIComponent = void 0, t.UIComponent = class {
+    },//->UIArrowInfo
+    9148: t => {
+        t.UIComponent = class {
             constructor(e) {
                 this.element = document.createElement("div"), this.isRemoved = !1, e.appendChild(this.element), this.element.className = this.getClass(), this.mutationObserver = new MutationObserver((() => {
                     document.body.contains(this.element) || this.remove()
@@ -3001,9 +2928,9 @@ var e = {
                 this.isRemoved || (this.mutationObserver.disconnect(), this.element.remove(), this.isRemoved = !0)
             }
         }
-    }, 9770: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIControlsHint = void 0;
-        const i = s(7906), n = s(9148);
+    },//->UIComponent
+    9770: t => {
+        const i = getModule(7906), n = getModule(9148);
 
         class o extends n.UIComponent {
             constructor(e, t) {
@@ -3046,9 +2973,9 @@ var e = {
         }
 
         t.UIControlsHint = o
-    }, 1521: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIGameView = void 0;
-        const i = s(5583), n = s(2149), o = s(9148);
+    },//->UIControlsHint
+    1521: t => {
+        const i = getModule(5583), n = getModule(2149), o = getModule(9148);
 
         class a extends o.UIComponent {
             constructor(e, t) {
@@ -3082,9 +3009,9 @@ var e = {
         }
 
         t.UIGameView = a
-    }, 9984: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIInventory = void 0;
-        const i = s(258), n = s(9148);
+    },//->UIGameView
+    9984: t => {
+        const i = getModule(258), n = getModule(9148);
 
         class o extends n.UIComponent {
             constructor(e) {
@@ -3137,9 +3064,9 @@ var e = {
         }
 
         t.UIInventory = o
-    }, 1402: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UILevelPlayButton = void 0;
-        const i = s(9148);
+    },//->UIInventory
+    1402: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e, t) {
@@ -3155,9 +3082,9 @@ var e = {
         }
 
         t.UILevelPlayButton = n
-    }, 1418: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIMapsMenuItem = void 0;
-        const i = s(9148);
+    },//->UILevelPlayButton
+    1418: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e, t, s) {
@@ -3172,8 +3099,9 @@ var e = {
         }
 
         t.UIMapsMenuItem = n
-    }, 503: function (e, t, s) {
-        var i = this && this.__awaiter || function (e, t, s, i) {
+    },//->UIMapsMenuItem
+    503: t => {
+        var i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -3201,8 +3129,7 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIMenu = void 0;
-        const n = s(3446), o = s(2461), a = s(2714), r = s(974), l = s(8560);
+        const n = getModule(3446), o = getModule(2461), a = getModule(2714), r = getModule(974), l = getModule(8560);
 
         class h extends l.UIPanel {
             constructor(e, t, s) {
@@ -3220,7 +3147,7 @@ var e = {
             }
 
             saveMap(e, t) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     this.setSaving(), this.messagePanelDiv.appendChild(this.savingDiv);
                     const s = (0, a.save)(t.gameMap), i = r.Utils.arrayBufferToBase64(s);
                     if (i === e.data) return void this.setSaved(200);
@@ -3235,9 +3162,9 @@ var e = {
         }
 
         t.UIMenu = h
-    }, 881: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIOkCancel = void 0;
-        const i = s(3446), n = s(8560);
+    },//->UIMenu
+    881: t => {
+        const i = getModule(3446), n = getModule(8560);
 
         class o extends n.UIPanel {
             constructor(e, t, s, n) {
@@ -3258,9 +3185,9 @@ var e = {
         }
 
         t.UIOkCancel = o
-    }, 8560: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIPanel = void 0;
-        const i = s(9148);
+    },//->UIOkCancel
+    8560: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e) {
@@ -3275,9 +3202,9 @@ var e = {
         }
 
         t.UIPanel = n
-    }, 6709: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIPauseSign = void 0;
-        const i = s(9148);
+    },//->UIPanel
+    6709: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e) {
@@ -3294,9 +3221,9 @@ var e = {
         }
 
         t.UIPauseSign = n
-    }, 3516: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIRange = void 0;
-        const i = s(9148);
+    },//->UIPauseSign
+    3516: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e, t, s = (() => "")) {
@@ -3340,9 +3267,9 @@ var e = {
         }
 
         t.UIRange = n
-    }, 9676: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UISavedItem = void 0;
-        const i = s(3446), n = s(2461), o = s(9148), a = s(881);
+    },//->UIRange
+    9676: t => {
+        const i = getModule(3446), n = getModule(2461), o = getModule(9148), a = getModule(881);
 
         class r extends o.UIComponent {
             constructor(e, t, s) {
@@ -3382,9 +3309,9 @@ var e = {
         }
 
         t.UISavedItem = r
-    }, 2203: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIToolbarArrow = void 0;
-        const i = s(9148);
+    },//->UISavedItem
+    2203: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e, t) {
@@ -3410,9 +3337,9 @@ var e = {
         }
 
         t.UIToolbarArrow = n
-    }, 8783: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIToolbarItemEmpty = void 0;
-        const i = s(9148);
+    },//->UIToolbarArrow
+    8783: t => {
+        const i = getModule(9148);
 
         class n extends i.UIComponent {
             constructor(e) {
@@ -3437,9 +3364,9 @@ var e = {
         }
 
         t.UIToolbarItemEmpty = n
-    }, 1655: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIToolbarItem = void 0;
-        const i = s(258), n = s(9148);
+    },//->UIToolbarItemEmpty
+    1655: t => {
+        const i = getModule(258), n = getModule(9148);
 
         class o extends n.UIComponent {
             constructor(e, t, s, i) {
@@ -3478,9 +3405,9 @@ var e = {
         }
 
         t.UIToolbarItem = o
-    }, 9841: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIToolbar = void 0;
-        const i = s(9148), n = s(2203), o = s(1655), a = s(8783);
+    },//->UIToolbarItem
+    9841: t => {
+        const i = getModule(9148), n = getModule(2203), o = getModule(1655), a = getModule(8783);
 
         class r extends i.UIComponent {
             constructor(e, t, s) {
@@ -3536,9 +3463,9 @@ var e = {
         }
 
         t.UIToolbar = r
-    }, 9237: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.UIToolbarController = void 0;
-        const i = s(9148), n = s(9984), o = s(9841);
+    },//->UIToolbar
+    9237: t => {
+        const i = getModule(9148), n = getModule(9984), o = getModule(9841);
 
         class a extends i.UIComponent {
             constructor(e) {
@@ -3564,11 +3491,11 @@ var e = {
             }
 
             nextGroup() {
-                void 0 !== this.arrowGroups[this.currentGroup + 1] && (this.currentGroup++, this.uiToolbar.setItems(this.currentGroup, this.arrowGroups), this.activateItem(this.activeType))
+                undefined !== this.arrowGroups[this.currentGroup + 1] && (this.currentGroup++, this.uiToolbar.setItems(this.currentGroup, this.arrowGroups), this.activateItem(this.activeType))
             }
 
             previousGroup() {
-                void 0 !== this.arrowGroups[this.currentGroup - 1] && (this.currentGroup--, this.uiToolbar.setItems(this.currentGroup, this.arrowGroups), this.activateItem(this.activeType))
+                undefined !== this.arrowGroups[this.currentGroup - 1] && (this.currentGroup--, this.uiToolbar.setItems(this.currentGroup, this.arrowGroups), this.activateItem(this.activeType))
             }
 
             getCurrentGroup() {
@@ -3602,7 +3529,8 @@ var e = {
         }
 
         t.UIToolbarController = a
-    }, 8939: function (e, t) {
+    },//->UIToolbarController
+    8939: t => {
         var s, i = this && this.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
@@ -3631,7 +3559,7 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.ArrowsDB = void 0, function (e) {
+        ((e) => {
             function t(e, t) {
                 e.result.objectStoreNames.contains(t) || e.result.createObjectStore(t, {keyPath: "id"}).createIndex("id", "id", {unique: !0})
             }
@@ -3641,12 +3569,12 @@ var e = {
             }
 
             e.write = function (e, t) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const n = indexedDB.open("arrows", 2);
-                    n.onupgradeneeded = () => s(n), n.onsuccess = () => i(this, void 0, void 0, (function* () {
+                    n.onupgradeneeded = () => s(n), n.onsuccess = () => i(this, undefined, undefined, (function* () {
                         const s = n.result;
                         yield function (e, t, s) {
-                            return i(this, void 0, void 0, (function* () {
+                            return i(this, undefined, undefined, (function* () {
                                 const i = e.transaction([t], "readwrite").objectStore(t).put(s);
                                 return new Promise(((e, t) => {
                                     i.onsuccess = t => {
@@ -3663,12 +3591,12 @@ var e = {
                     }
                 }))
             }, e.read = function (e, t) {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const n = indexedDB.open("arrows", 2);
                     return n.onupgradeneeded = () => s(n), new Promise(((s, o) => {
-                        n.onsuccess = () => i(this, void 0, void 0, (function* () {
+                        n.onsuccess = () => i(this, undefined, undefined, (function* () {
                             const o = n.result, a = yield function (e, t, s) {
-                                return i(this, void 0, void 0, (function* () {
+                                return i(this, undefined, undefined, (function* () {
                                     const i = e.transaction([t], "readwrite").objectStore(t).get(s);
                                     return new Promise(((e, t) => {
                                         i.onsuccess = t => {
@@ -3687,26 +3615,25 @@ var e = {
                     }))
                 }))
             }
-        }(s || (t.ArrowsDB = s = {}))
-    }, 7755: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.AuthGoogle = void 0;
-        const i = s(2461);
-        var n;
-        !function (e) {
-            e.getAuthURL = function () {
-                const e = {
-                    redirect_uri: `${i.Routes.getURL()}/auth/google`,
-                    client_id: "480103000605-r44ki2s4brehsbih1nb676gnialp4a5v.apps.googleusercontent.com",
-                    access_type: "offline",
-                    response_type: "code",
-                    prompt: "consent",
-                    scope: "https://www.googleapis.com/auth/userinfo.email"
-                };
-                return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(e).toString()}`
-            }
-        }(n || (t.AuthGoogle = n = {}))
-    }, 2149: (e, t) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.load = void 0, t.load = function (e, t) {
+        })(t.ArrowsDB = {})
+    },//->ArrowsDB
+    7755: t => {
+        const i = getModule(2461);
+        t.AuthGoogle = {};
+        t.AuthGoogle.getAuthURL = function () {
+            const e = {
+                redirect_uri: `${i.Routes.getURL()}/auth/google`,
+                client_id: "480103000605-r44ki2s4brehsbih1nb676gnialp4a5v.apps.googleusercontent.com",
+                access_type: "offline",
+                response_type: "code",
+                prompt: "consent",
+                scope: "https://www.googleapis.com/auth/userinfo.email"
+            };
+            return `https://accounts.google.com/o/oauth2/v2/auth?${new URLSearchParams(e).toString()}`
+        }
+    },//->AuthGoogle
+    2149: t => {
+        t.load = function (e, t) {
             if (t.length < 4) return;
             let s = 0, i = t[s++];
             if (i |= t[s++] << 8, 0 !== i) throw new Error("Unsupported save version");
@@ -3727,8 +3654,9 @@ var e = {
                 }
             }
         }
-    }, 2461: function (e, t) {
-        var s, i = this && this.__awaiter || function (e, t, s, i) {
+    },//->load
+    2461: t => {
+        var s, i = t && t.__awaiter || function (e, t, s, i) {
             return new (s || (s = Promise))((function (n, o) {
                 function a(e) {
                     try {
@@ -3756,7 +3684,7 @@ var e = {
                 l((i = i.apply(e, t || [])).next())
             }))
         };
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Routes = void 0, function (e) {
+        (e => {
             function t() {
                 const e = "localhost" === window.location.hostname ? ":3000" : "";
                 return `${window.location.protocol}//${window.location.hostname}${e}/api`
@@ -3871,7 +3799,7 @@ var e = {
                     }))
                 }))
             }, e.checkNameChange = function () {
-                return i(this, void 0, void 0, (function* () {
+                return i(this, undefined, undefined, (function* () {
                     const e = `${t()}/checknamechange`;
                     return new Promise((t => {
                         fetch(e, {
@@ -3936,10 +3864,11 @@ var e = {
                     }))
                 }))
             }
-        }(s || (t.Routes = s = {}))
-    }, 2714: (e, t, s) => {
-        Object.defineProperty(t, "__esModule", {value: !0}), t.save = void 0;
-        const i = s(3278);
+        })(t.Routes = {})
+    },//->Routes
+    2714: t => {
+        t.save = undefined;
+        const i = getModule(3278);
         t.save = function (e) {
             const t = [];
             return t.push(0, 0), t.push(255 & e.chunks.size, e.chunks.size >> 8 & 255), e.chunks.forEach((e => {
@@ -3960,9 +3889,10 @@ var e = {
                 }))
             })), t
         }
-    }, 974: (e, t) => {
+    },//->save
+    974: t => {
         var s;
-        Object.defineProperty(t, "__esModule", {value: !0}), t.Utils = void 0, function (e) {
+        t.Utils = undefined, function (e) {
             e.arrayBufferToBase64 = function (e) {
                 let t = "";
                 const s = new Uint8Array(e), i = s.byteLength;
@@ -3970,59 +3900,378 @@ var e = {
                 return window.btoa(t)
             }
         }(s || (t.Utils = s = {}))
-    }
-}, t = {};
-
-function s(i) {
-    var n = t[i];
-    if (void 0 !== n) {
-        return n.exports;
-    }
-    var o = t[i] = {exports: {}};
-    return e[i].call(o.exports, o, o.exports, s), o.exports
+    }//->Utils
 }
-(() => {
-    const e = s(691),
-          t = s(2413),
-          i = s(3446),
-          n = s(3295),
-          o = s(3737),
-          a = s(1494),
-          r = s(258),
-          l = s(8939),
-          h = s(2149),
-          c = s(2461),
-          d = s(2714),
-          u = s(974),
-          g = new a.Navigation,
-          p = new Image;
-    r.PlayerSettings.arrowAtlasImage = p, p.src = `res/sprites/atlas.png?v=${r.PlayerSettings.version}`, p.addEventListener("load",
-        () => {
-            for (let e = 0; e < navigator.languages.length; e++) {
-                let t = navigator.languages[e];
-                const s = t.indexOf("-");
-                -1 !== s && (t = t.substring(0, s));
-                const i = o.LangUtils.getLanguageFromString(t);
-                if (n.LangSettings.languages.includes(i)) {
-                    n.LangSettings.setLanguage(i);
-                    break
+var loadedModules = {};
+function getModule(name) {
+    let isModded = false;
+    let module = loadedModules[name];
+    if (module === undefined) {
+
+        let moduleLoader = moduleLoaders[name];
+        //region MODS: OPERATION_SET_MODULE_LOADER
+        (() => {
+            let mod = NativeModsLoader.getCodeModsByExpression(null, `${name}`, NativeModsLoader.OPERATION_SET_MODULE_LOADER)[0];// Берём первый мод, т.к. у него самый высокий приоритет.
+            if (mod !== undefined) {
+                moduleLoader = mod.value;
+                isModded = true;
+            }
+        })();
+        //endregion
+        //region MODS: OPERATION_EXPAND_MODULE_LOADER
+        (() => {
+            let mods = NativeModsLoader.getCodeModsByExpression(null, `${name}`, NativeModsLoader.OPERATION_EXPAND_MODULE_LOADER);
+            for (let mod of mods) {
+                isModded = true;
+                let oldModLoader = moduleLoader;
+                moduleLoader = function (...args) {
+                    let ret = oldModLoader.apply(this, args);
+                    return mod.value.call(this, args, ret);
                 }
             }
-            g.start();
-        }
-    ),
-        window.game = {
-        navigation: g,
-        PlayerSettings: r.PlayerSettings,
-        LangSettings: n.LangSettings,
-        LangUtils: o.LangUtils,
-        ChunkUpdates: e.ChunkUpdates,
-        ArrowsDB: l.ArrowsDB,
-        Routes: c.Routes,
-        ArrowDescriptions: t.ArrowDescriptions,
-        GameText: i.GameText,
-        Utils: u.Utils,
-        save: d.save,
-        load: h.load
+        })();
+        //endregion
+        if (moduleLoader === undefined) return undefined;
+        module = loadedModules[name] = {
+            exports: {
+                __esModule: true,
+                __esModuleName: name,
+                __esModuleIsModded: isModded
+            }
+        };
+
+        moduleLoader.call(
+            null,//module.exports
+            //module
+            module.exports
+            //getModule
+        );
     }
+    //region MODS
+    (() => {
+        function elementsLogic(object, path) {
+            if (object === undefined || object === null) return;
+
+            for (let name of Object.getOwnPropertyNames(object)) {
+                if (name!=="prototype") {
+                    //console.log("ownPropertyNames: " + Object.getOwnPropertyNames(object));
+                    elementLogic(object, name, path + '.' + name);
+                }
+            }
+            if (object.prototype !== undefined) {
+                for (let name of Object.getOwnPropertyNames(object.prototype)) {
+                    elementLogic(object.prototype, name, path + '#' + name);
+                }
+            }
+        }
+        function elementLogic(parentObject, objectName, path) {
+            if (
+                !isNaN(Number(objectName)) ||
+                path.endsWith("constructor#constructor")
+            ) return;
+            //console.log("path: " + path);
+            if (path==="3246.Render"){
+                console.log("para!");
+            }
+            function modsLogic(operation, isLevelReverse, action) {
+                let mods = NativeModsLoader.getCodeModsByExpression(null, path, operation);
+                if (isLevelReverse) mods = mods.reverse();
+                for (let mod of mods) {
+                    isModded = true;
+                    if (objectName==="constructor") NativeModsLoader.sendModException("для расширения конструктора класса используйте NativeModsLoader.OPERATION_EXPAND_CLASS_CONSTRUCTOR");
+                    else parentObject[objectName] = action(mod, parentObject[objectName]);
+                }
+            }
+
+            modsLogic(NativeModsLoader.OPERATION_SET, true, (mod, object) => {
+                return mod.value
+            });
+            modsLogic(NativeModsLoader.OPERATION_PROCESS, false, (mod, object) => {
+                let newObject = mod.value(object);
+                if (newObject!==undefined) return newObject;
+                return object;
+            });
+            modsLogic(NativeModsLoader.OPERATION_EXPAND_FUNCTION, false, (mod, object) => {
+                return function (...args) {
+                    let ret = object.apply(this, args);
+                    mod.value.apply(this, args);
+                    return ret;
+                }
+            });
+            modsLogic(NativeModsLoader.OPERATION_SET_FUNCTION_VALUE, true, (mod, object) => {
+                return function (...args) {
+                    object.apply(this, args);
+                    return mod.value;
+                }
+            });
+            modsLogic(NativeModsLoader.OPERATION_PROCESS_FUNCTION_VALUE, false, (mod, object) => {
+                return function (...args) {
+                    return mod.value(object.apply(this, args));
+                }
+            });
+            modsLogic(NativeModsLoader.OPERATION_EXTEND_CLASS, true, (mod, object) => {
+                let clazz = mod.value;
+                for (let elName of Object.getOwnPropertyNames(clazz)) {
+                    object[elName] = clazz[elName];
+                }
+                for (let elName of Object.getOwnPropertyNames(clazz.prototype)) {
+                    if (elName==="constructor") {
+                        NativeModsLoader.sendModException("для расширения конструктора класса используйте NativeModsLoader.OPERATION_EXPAND_CLASS_CONSTRUCTOR");
+                    }
+                    else object.prototype[elName] = clazz.prototype[elName];
+                }
+                return object;
+            });
+            modsLogic(NativeModsLoader.OPERATION_EXPAND_CLASS_CONSTRUCTOR, false, (mod, object) => {
+                let oldClazz = object;
+                object = class extends oldClazz {
+                    constructor(...args) {
+                        super(...args);
+                        mod.value.apply(this, args);
+                    }
+                }
+                return object;
+            });
+
+            elementsLogic(parentObject[objectName], path);
+        }
+
+        elementsLogic(module.exports, name);
+    })();
+    //endregion
+
+    //region MODS: OPERATION_SET_T_VALUE, OPERATION_PROCESS_T_VALUE
+    (() => {
+        let mods1 = NativeModsLoader.getCodeModsByExpression(null, `${name}`, NativeModsLoader.OPERATION_SET_T_VALUE);
+        let mods2 = NativeModsLoader.getCodeModsByExpression(null, `${name}`, NativeModsLoader.OPERATION_PROCESS_T_VALUE);
+        let mods = mods1.concat(mods2).sort((a, b) => {
+            return a.level - b.level;
+        });
+        for (let mod of mods) {
+            isModded = true;
+            if (mod.operation === NativeModsLoader.OPERATION_SET_T_VALUE) module.exports = mod.value(module.exports);
+            if (mod.operation === NativeModsLoader.OPERATION_PROCESS_T_VALUE) mod.value(module.exports);
+        }
+    })();
+    //endregion
+
+
+    Object.defineProperty(module.exports, "__esModule", {value: !0});
+    Object.defineProperty(module.exports, "__esModuleName", {value: name});
+    Object.defineProperty(module.exports, "__esModuleIsModded", {value: `${isModded}`});
+    return module.exports;
+}// модифицированная s-функция для работы NativeModsLoader.
+
+class NativeModsLoader {
+    static OPERATION_SET = 1;// изменить значние переменной
+    static OPERATION_PROCESS = 2;// обработать значение (прогнать через метод)
+    //закоменченно потому что действует как OPERATION_SET:   static OPERATION_IMPLEMENT_FUNCTION = 3;// изменить действие функции
+    static OPERATION_EXPAND_FUNCTION = 4;// добавить код к функции
+    static OPERATION_SET_FUNCTION_VALUE = 5;// изменить значние, которое вернула функция
+    static OPERATION_PROCESS_FUNCTION_VALUE = 6;// обработать значение, которое вернула функция (прогнать через метод)
+    //закоменченно потому что действует как OPERATION_SET:   static OPERATION_SET_CLASS = 7;// заменить класс
+    //закоменченно потому что действует как OPERATION_PROCESS:   static OPERATION_PROCESS_CLASS = 8;// обработать класс
+    static OPERATION_EXTEND_CLASS = 9;// реализовать класс (чуть-чуть отличается от EXPAND_CLASS в оформлении и возможностях)
+    static OPERATION_EXPAND_CLASS_CONSTRUCTOR = 10; // расширить конструктор (js не даёт изменить конструктор приравниванием, поэтому это делается отдельным сложным способом)
+
+    static OPERATION_SET_MODULE_LOADER = 11;
+    static OPERATION_EXPAND_MODULE_LOADER = 12;
+    static OPERATION_SET_T_VALUE = 13;
+    static OPERATION_PROCESS_T_VALUE = 14;
+
+
+    static LEVEL_ZERO = 0;
+    static LEVEL_SYSTEM = 2;
+    static LEVEL_ENGINE = 5;
+    static LEVEL_GAME_LOGIC = 10;
+    static LEVEL_GAME_LOGIC_A = 14;
+    static LEVEL_GAME_LOGIC_B = 17;
+    static LEVEL_GAME_LOGIC_C = 20;
+    static LEVEL_LISTENER = 30;
+    static LEVEL_LOW = 50;
+
+    // класс мода, описывающий любые изменения в исходном коде, которые можно внести модом!
+    static CodeMod = class {
+        location;// локация - показывает что именно вы хотите изменить в моде.
+        operation;// операция - как вы хотите изменить значение?
+        // operations: "replace" - изменить / "append" - добавить (в конец) / "prepend" - добавить (в начало)
+        value;// Значние, на которое вы хотите заменить, или которое вы хотите прибавить. (или функция обработчик)
+        level;// Уровень - как бы приоритет вашего мода среди других. Желательно указывать его честно, чтобы сложные технические моды имели высший приоритет, а мод добавляющий смайлик приоритет ниже.
+        //default levels: zero(0),system(1),engine(2),gamelogic(3),listener(5)
+
+        constructor(location, operation, value, level) {
+            this.location = location;
+            this.operation = operation;
+            this.value = value;
+            this.level = level;
+        }
+    }
+
+    static codeMods = [];// список модов
+
+    static addCodeMod(location, operation, value, level, active) {
+        if (active!==undefined && !active) return;
+        let mod = (operation === undefined && value === undefined && level === undefined)
+            ? location
+            : new this.CodeMod(location, operation, value, level);
+
+        if (mod.location.startsWith(".") || mod.location.startsWith("#")){
+            mod.location = `*${mod.location}`;
+        }
+
+        if (this.codeMods.length > 0) {
+            for (let i = 0; i <= this.codeMods.length; i++) {
+                let level = (i === this.codeMods.length)
+                    ? 999
+                    : this.codeMods[i].level;
+                if (mod.level < level) {
+                    this.codeMods.insert(mod, i);
+                    break;
+                }
+            }
+        } else this.codeMods.push(mod);
+        //start();
+    }
+    static removeCodeMod(mod) {
+        this.codeMods.remove(mod);
+    }
+    static containsCodeMod(mod) {
+        return this.codeMods.indexOf(mod) !== -1;
+    }
+    static getCodeModsBy(type, value) {
+        let list = [];
+        for (let codeMod of this.codeMods) {
+            if (codeMod[type] === value) list.push(codeMod);
+        }
+        return list;
+    }
+    static getCodeModsByLocation(location) {
+        return this.getCodeModsBy("location", location);
+    }
+    static getCodeModsByLevel(level) {
+        return this.getCodeModsBy("level", level);
+    }
+    static getCodeModsByOperation(operation) {
+        return this.getCodeModsBy("operation", operation);
+    }
+    static getCodeModsByValue(value) {
+        return this.getCodeModsBy("value", value);
+    }
+    static getCodeModsByExpression(level, expression, operation){
+        function locationToArgs(loc) {
+            let els = [];
+            let el = "";
+            for (let i = 0; i < loc.length; i++) {
+                let c = loc.charAt(i);
+                if ("#.+:".includes(c)) {
+                    els.push(el);
+                    els.push(c);
+                    el = "";
+                } else {
+                    el += c;
+                    if (i === loc.length - 1) els.push(el);
+                }
+            }
+            return els;
+        }
+
+        let mainArgs = locationToArgs(expression);
+
+        let sortedMods = [];
+        for (let mod of this.codeMods) {
+            if (
+                (level !== null && level !== mod.level) ||
+                (operation !== null && operation !== mod.operation)
+            ) continue;
+
+            if (location === null || mod.location == null) {
+                sortedMods.push(mod);
+            } else {
+                let locArgs = locationToArgs(mod.location);
+                if (mainArgs.length !== locArgs.length) {
+                    //sortedMods.push(mod);
+                    continue;
+                }
+                let flag = true;
+                for (let i = 0; i < mainArgs.length; i++) {
+                    let mainArg = mainArgs.at(i);
+                    let locArg = locArgs.at(i);
+                    if (mainArg !== "*" && locArg !== "*" && mainArg !== locArg) {
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    sortedMods.push(mod);
+                }
+            }
+        }
+        return sortedMods;
+    }
+
+    static sendModException(text){
+        console.log("[MODLOADER] ERROR: " + text);
+    }
+}//завершён
+class ModsLoader {
+    static setText(textId, en, ru, ua, by, fr){
+        Resources.GameText[textId] = new Resources.I18nText(en, ru, ua, by, fr);
+    }
+
+    static set
+}// в разработке
+class Resources {
+    static I18nText = getModule(6161).I18nText;
+    static GameText = getModule(3446).GameText;
+    //static Page = getModule(4723).Page;
+    static navigation;//TODO: возможно нужно будет удалить
+}// можно расширять вечно
+
+function start() {
+    let langSettingModule = getModule(3295);
+    let langUtilsModule = getModule(3737);
+    let playerSettingsModule = getModule(258);
+    Resources.navigation = new (getModule(1494).Navigation);
+    let atlasImage = new Image;
+    playerSettingsModule.PlayerSettings.arrowAtlasImage = atlasImage, atlasImage.src = `res/sprites/atlas.png?v=${playerSettingsModule.PlayerSettings.version}`, atlasImage.addEventListener("load", (() => ((() => {
+        for (let e = 0; e < navigator.languages.length; e++) {
+            let t = navigator.languages[e];
+            const s = t.indexOf("-");
+            -1 !== s && (t = t.substring(0, s));
+            const i = langUtilsModule.LangUtils.getLanguageFromString(t);
+            if (langSettingModule.LangSettings.languages.includes(i)) {
+                langSettingModule.LangSettings.setLanguage(i);
+                break
+            }
+        }
+    })(), void Resources.navigation.start()))), window.game = {
+        navigation: Resources.navigation,
+        PlayerSettings: playerSettingsModule.PlayerSettings,
+        LangSettings: langSettingModule.LangSettings,
+        LangUtils: langUtilsModule.LangUtils,
+        ChunkUpdates: getModule(691).ChunkUpdates,
+        ArrowsDB: getModule(8939).ArrowsDB,
+        Routes: getModule(2461).Routes,
+        ArrowDescriptions: getModule(2413).ArrowDescriptions,
+        GameText: getModule(3446).GameText,
+        Utils: getModule(974).Utils,
+        save: getModule(2714).save,
+        load: getModule(2149).load
+    }
+}//функция инициализации игры.
+setTimeout(start, 10);//задержка, которая позволяет модам-расширениям успеть загрузиться.
+
+
+(()=>{
+    ModsLoader.setText("MAPS","maps","мапы","мыпы","майпы","mapse");
+    //ModsLoader.addPathExecuter("/test",(openOperation)=>{
+    //
+    //})
+
+    NativeModsLoader.addCodeMod(".Navigation#goToGuide",NativeModsLoader.OPERATION_SET,function (e){
+        console.log("goToGuide");
+        var t;
+        null !== this.menuPage ? null === (t = this.menuPage.page) || undefined === t || t.dispose() : (this.removePages(), this.menuPage = new (getModule(4820).MenuPage)("guide", this.doMenuAction));
+        document.title = `${Resources.GameText.GUIDE.get()} | ${Resources.GameText.ARROWS_TITLE.get()}`, this.menuPage.page = new (getModule(8562).GuidePage)(this.menuPage.getContent()), "go" === e ? window.history.pushState(null, "", "guide") : "start" === e ? window.history.replaceState(null, "", "guide") : "return" === e && this.menuPage.setCategory("guide")
+    }, NativeModsLoader.LEVEL_SYSTEM);
 })();

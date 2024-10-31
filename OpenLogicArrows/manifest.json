@@ -1,7 +1,7 @@
 {
     "name": "Open Logic-Arrows",
     "description": "New setting for Logic-Arrows",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "manifest_version": 3,
     "icons": {
         "256": "logo.png"
